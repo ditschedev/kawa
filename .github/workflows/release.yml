@@ -26,8 +26,13 @@ jobs:
           VERSION=${GITHUB_REF_NAME#v}
           mvn versions:set -DnewVersion=$VERSION -DgenerateBackupPoms=false
 
+      - name: Import GPG key
+        run: echo "${{ secrets.JRELEASER_GPG_SECRET_KEY }}" | gpg --batch --import
+
       - name: Build & stage artifacts
         run: mvn --batch-mode -Ppublish clean deploy -DskipTests -DaltDeploymentRepository=local::file:./target/staging-deploy
+        env:
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}
 
       - name: Release with JReleaser
         run: mvn jreleaser:full-release
