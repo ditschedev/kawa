@@ -1,12 +1,16 @@
 name: Publish Snapshot
 
 on:
+  pull_request:
   push:
     branches: [main]
 
 jobs:
   snapshot:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v4
 
@@ -15,15 +19,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
-          server-id: ossrh
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_PASSWORD
+          server-id: github
+          server-username: GITHUB_ACTOR
+          server-password: GITHUB_TOKEN
 
       - name: Set SNAPSHOT version
         run: mvn versions:set -DnewVersion=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)-SNAPSHOT -DgenerateBackupPoms=false
 
-      - name: Deploy SNAPSHOT to OSSRH
-        run: mvn --batch-mode deploy -DskipTests -Dcentral.publishing.skip=true
+      - name: Deploy SNAPSHOT to GitHub Packages
+        run: mvn --batch-mode deploy -DskipTests -DaltDeploymentRepository=github::https://maven.pkg.github.com/${{ github.repository }}
         env:
-          MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
