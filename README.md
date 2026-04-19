@@ -84,4 +84,4 @@ Contributions are welcome.
 
 If you want to contribute, opening an issue or pull request with a small focused change is the easiest way to get started.
 
-Built on top of [Apache PDFBox](https://pdfbox.apache.org/).
+Built on top of [Apache PDFBox](https://pdfbox.apache.org/) which is licensed under Apache License 2.0.
