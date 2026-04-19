@@ -7,6 +7,7 @@ public class DocumentSettings {
   private String author = "";
   private String subject = "";
   private String creator = "Kawa PDF Library";
+  private boolean silent = true;
 
   public DocumentSettings title(String title) {
     this.title = title;
@@ -26,6 +27,15 @@ public class DocumentSettings {
   public DocumentSettings creator(String creator) {
     this.creator = creator;
     return this;
+  }
+
+  public DocumentSettings silent(boolean silent) {
+    this.silent = silent;
+    return this;
+  }
+
+  public boolean isSilent() {
+    return silent;
   }
 
   public String getTitle() {

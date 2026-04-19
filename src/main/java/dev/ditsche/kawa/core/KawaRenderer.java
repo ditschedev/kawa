@@ -6,6 +6,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.function.IntConsumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 
@@ -46,6 +49,11 @@ class KawaRenderer {
 
   private PDDocument buildDocument() throws IOException {
     PDDocument pdDoc = new PDDocument();
+
+    // Disable PDFBox logging to avoid spamming the console with warnings about missing fonts, etc.
+    if(settings.isSilent()) {
+      Logger.getLogger("org.apache.pdfbox").setLevel(Level.OFF);
+    }
 
     // Apply metadata
     PDDocumentInformation info = pdDoc.getDocumentInformation();
