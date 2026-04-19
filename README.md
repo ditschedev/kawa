@@ -24,7 +24,7 @@ Compose reports, invoices, and generated documents with text, tables, images, la
 <dependency>
   <groupId>dev.ditsche</groupId>
   <artifactId>kawa</artifactId>
-  <version>0.1.0</version>
+  <version>0.1.1</version>
 </dependency>
 ```
 
