@@ -1,0 +1,66 @@
+---
+title: Elements
+description: How elements work and how to add them to a page.
+---
+
+Elements are the building blocks of a document. Every visible thing on a page, whether it is a line of text, a table row, an image, or a spacer, is an element.
+
+## Adding elements
+
+Inside a `content()`, `header()`, or `footer()` callback you receive a `ColumnElement`. Call `.item()` on it to add children fluently:
+
+```java
+content(c -> {
+    c.item().text("A paragraph of text");
+    c.item().spacer(12);
+    c.item().row(row -> {
+        row.fillColumn(col -> col.text("Left"));
+        row.fillColumn(col -> col.text("Right"));
+    });
+    c.item().table(table -> { /* ... */ });
+})
+```
+
+You can also pass a pre-built element directly to `.add()`:
+
+```java
+c.add(new SeparatorElement().color(Colors.GRAY_400));
+c.add(ImageElement.ofResource("/logo.svg").width(120));
+```
+
+## Element types
+
+<Cards>
+  <Card
+    title="Text"
+    href="/docs/elements/text"
+    description="TextElement and RichTextElement for plain and mixed-style text."
+  />
+  <Card
+    title="Layout"
+    href="/docs/elements/layout"
+    description="Column, Row, Grid, Container, and Stack for arranging content."
+  />
+  <Card
+    title="Table"
+    href="/docs/elements/table"
+    description="TableElement with typed columns, headers, rows, and per-cell styling."
+  />
+  <Card title="Media" href="/docs/elements/media" description="Images, QR codes, and barcodes." />
+  <Card
+    title="Structural"
+    href="/docs/elements/structural"
+    description="Spacers, separators, and page breaks."
+  />
+  <Card title="Form" href="/docs/elements/form" description="Input fields and hyperlinks." />
+</Cards>
+
+## How measuring and rendering work
+
+Every element has three internal methods that Kawa calls during generation:
+
+- `measure(ctx)` returns the height the element needs for the available width. Kawa uses this to decide whether the element fits on the current page.
+- `render(ctx, renderCtx)` draws the element into the PDF.
+- `renderSlice(...)` draws a partial portion when the element needs to split across a page break. Layout elements like `TableElement` and `ColumnElement` support this.
+
+You never call these methods yourself.

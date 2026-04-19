@@ -1,0 +1,104 @@
+---
+title: Getting Started
+description: Add Kawa to your project and render your first PDF.
+---
+
+## Installation
+
+Add Kawa to your Maven project:
+
+```xml title="pom.xml"
+<dependency>
+  <groupId>io.kawa</groupId>
+  <artifactId>kawa</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
+
+<Callout type="warning">Kawa requires **Java 17** or later.</Callout>
+
+<Callout type="warning">
+  Kawa v1 is still in development. Expect API changes until the first stable release.
+</Callout>
+
+## Your first document
+
+The quickest way to create a PDF is with `Document.create()`:
+
+```java
+import io.kawa.core.Document;
+import io.kawa.core.PageSize;
+
+Document.create(doc -> {
+    doc.title("Hello World");
+
+    doc.page(page -> page
+        .size(PageSize.A4)
+        .margin(50)
+        .content(c -> {
+            c.item().text("Hello, Kawa!").bold().fontSize(24);
+            c.item().text("This is my first PDF document.");
+        })
+    );
+}).generatePdf("hello.pdf");
+```
+
+## Reusable document classes
+
+If you need to generate the same report with different data, implement `KawaDocument`. This keeps your layout code separate from where you call it.
+
+```java
+import io.kawa.core.*;
+
+public class InvoiceReport implements KawaDocument {
+
+    private final String invoiceNumber;
+
+    public InvoiceReport(String invoiceNumber) {
+        this.invoiceNumber = invoiceNumber;
+    }
+
+    @Override
+    public void configure(DocumentSettings settings) {
+        settings.title("Invoice " + invoiceNumber)
+                .author("ACME GmbH");
+    }
+
+    @Override
+    public void compose(PageDefinition page) {
+        page.size(PageSize.A4)
+            .margin(50)
+            .header(h -> h.text("ACME GmbH").bold().fontSize(14))
+            .content(c -> {
+                c.item().text("Invoice: " + invoiceNumber).bold().fontSize(16);
+                c.item().spacer(12);
+                c.item().text("Thank you for your business.");
+            });
+    }
+}
+```
+
+Then generate it wherever you need it:
+
+```java
+new InvoiceReport("INV-2025-001").generatePdf("invoice.pdf");
+
+// Or get the bytes if you want to send it somewhere
+byte[] bytes = new InvoiceReport("INV-2025-001").generateBytes();
+```
+
+## Output options
+
+Both `Document` and `KawaDocument` let you write to different targets:
+
+```java
+doc.generatePdf("output.pdf");              // file path
+doc.generatePdf(new File("output.pdf"));    // File object
+doc.generatePdf(outputStream);              // OutputStream
+byte[] bytes = doc.generateBytes();         // byte array
+```
+
+<Callout>
+  `KawaDocument` has an optional `onAfterGeneration(int pageCount)` method that gets called once
+  rendering finishes. It is useful for logging or triggering follow-up actions.
+</Callout>

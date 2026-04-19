@@ -1,0 +1,79 @@
+---
+title: Document API
+description: Two ways to build a PDF document in Kawa.
+---
+
+Kawa gives you two ways to build a document. Both produce the same result, so the choice comes down to how much structure and reusability you need.
+
+## Inline with `Document.create()`
+
+`Document.create()` takes a consumer and configures everything in one place. It works well for one-off documents or scripts where you just need a quick PDF.
+
+```java
+Document.create(doc -> {
+    doc.title("Report Q1 2025")
+       .author("Finance Team")
+       .subject("Quarterly Report");
+
+    doc.page(page -> page
+        .size(PageSize.A4)
+        .margin(50)
+        .content(c -> c.item().text("Content goes here"))
+    );
+}).generatePdf("report.pdf");
+```
+
+You can call `doc.page(...)` multiple times if you need pages with different sizes, margins, or content templates.
+
+## Class-based with `KawaDocument`
+
+Implementing `KawaDocument` is the right choice when you want to reuse a report structure with different data. Your layout lives in one class and you instantiate it wherever you need it.
+
+```java
+public class QuarterlyReport implements KawaDocument {
+
+    private final String quarter;
+    private final List<LineItem> items;
+
+    @Override
+    public void configure(DocumentSettings settings) {
+        settings.title("Report " + quarter)
+                .author("Finance Team");
+    }
+
+    @Override
+    public void compose(PageDefinition page) {
+        page.size(PageSize.A4).margin(50)
+            .header(h -> h.text("Q" + quarter).bold())
+            .content(c -> {
+                for (LineItem item : items) {
+                    c.item().text(item.label());
+                }
+            });
+    }
+
+    @Override
+    public void onAfterGeneration(int pageCount) {  // optional
+        System.out.println("Rendered " + pageCount + " pages");
+    }
+}
+```
+
+## Document metadata
+
+`DocumentSettings` sets the PDF file metadata. These values show up in the reader's document info panel and are picked up by search indexers.
+
+| Method             | Description      |
+| ------------------ | ---------------- |
+| `.title(String)`   | Document title   |
+| `.author(String)`  | Author name      |
+| `.subject(String)` | Document subject |
+
+## Output methods
+
+| Method                              | Description          |
+| ----------------------------------- | -------------------- |
+| `.generatePdf(String path)`         | Write to a file path |
+| `.generatePdf(File file)`           | Write to a `File`    |
+| `.generatePdf(OutputStream stream)` | Write to a stream    |
+| `.generateBytes()`                  | Return `byte[]`      |

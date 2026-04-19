@@ -1,0 +1,118 @@
+---
+title: Fonts
+description: Load custom fonts from files, classpath resources, or Google Fonts. Apply CSS-style numeric weights to any element.
+---
+
+By default Kawa uses Helvetica — a standard PDF font that does not need to be embedded. For custom typography, create a `KawaFont` and apply it to any element.
+
+## Font weights
+
+Kawa uses a CSS-style numeric weight scale. Named shortcuts cover the most common values:
+
+| Method         | Weight | CSS equivalent    |
+| -------------- | ------ | ----------------- |
+| `.light()`     | 300    | light             |
+| `.regular()`   | 400    | normal            |
+| `.medium()`    | 500    | medium            |
+| `.semiBold()`  | 600    | semi-bold         |
+| `.bold()`      | 700    | bold              |
+| `.weight(int)` | custom | any value 100–900 |
+
+```java
+c.text("Light heading").light().fontSize(14);
+c.text("Normal body").fontSize(11);
+c.text("Emphasis").semiBold();
+c.text("Strong").bold();
+c.text("Extra heavy").weight(800);
+```
+
+The italic axis is independent — combine it with any weight:
+
+```java
+c.text("Italic semi-bold").semiBold().italic();
+```
+
+## Loading fonts
+
+### Google Fonts
+
+The easiest option — Kawa downloads and caches the font automatically:
+
+```java
+KawaFont lato = KawaFont.fromGoogle("Lato");
+```
+
+On first use Kawa fetches the available variants from Google Fonts and saves them to `~/.kawa/fonts/`. Subsequent calls load from that cache.
+
+<Callout type="warn">
+  `KawaFont.fromGoogle()` needs a network connection on first use. In offline or CI environments,
+  load fonts from files or classpath resources.
+</Callout>
+
+### Classpath resources
+
+Bundle the font files inside your JAR and load them by weight:
+
+```java
+// Single file — all weights fall back to regular
+KawaFont inter = KawaFont.ofResource("/fonts/Inter-Regular.ttf");
+
+// Builder — register each weight you have
+KawaFont inter = KawaFont.builder()
+    .weight(400, FontSource.resource("/fonts/Inter-Regular.ttf"))
+    .weight(600, FontSource.resource("/fonts/Inter-SemiBold.ttf"))
+    .weight(700, FontSource.resource("/fonts/Inter-Bold.ttf"))
+    .weightItalic(400, FontSource.resource("/fonts/Inter-Italic.ttf"))
+    .build();
+```
+
+Named builder shortcuts map directly to weights:
+
+```java
+KawaFont inter = KawaFont.builder()
+    .regularResource("/fonts/Inter-Regular.ttf")
+    .semiBold(new ResourceFontSource("/fonts/Inter-SemiBold.ttf"))
+    .boldResource("/fonts/Inter-Bold.ttf")
+    .italicResource("/fonts/Inter-Italic.ttf")
+    .build();
+```
+
+### File system
+
+```java
+KawaFont custom = KawaFont.builder()
+    .weight(400, "/usr/share/fonts/Custom-Regular.ttf")
+    .weight(700, "/usr/share/fonts/Custom-Bold.ttf")
+    .build();
+```
+
+## Weight resolution
+
+When you request a weight that is not explicitly registered, Kawa picks the nearest registered weight. With the two-file setup below, `.semiBold()` (600) resolves to the bold file (700) since that is closest:
+
+```java
+KawaFont f = KawaFont.builder()
+    .weight(400, "/fonts/Inter-Regular.ttf")
+    .weight(700, "/fonts/Inter-Bold.ttf")
+    .build();
+
+c.text("Nearest bold").font(f).semiBold();   // resolves to 700
+c.text("Nearest regular").font(f).medium();  // resolves to 400
+```
+
+If no italic sources are registered, Kawa falls back to the nearest upright source.
+
+## Applying fonts to elements
+
+```java
+c.text("Heading").font(inter).semiBold().fontSize(16);
+c.text("Subheading").font(inter).medium().fontSize(12);
+c.text("Body").font(inter).fontSize(11);
+c.text("Caption").font(inter).light().italic().fontSize(9);
+```
+
+`TextElement`, `RichTextElement.Span`, and `HyperlinkElement` all support the same weight and italic API.
+
+## Fallback
+
+If a font fails to load for any reason, Kawa falls back to Helvetica and logs a warning. The document still renders; only the typeface changes.

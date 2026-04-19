@@ -1,0 +1,73 @@
+---
+title: Structural Elements
+description: Spacers, separators, and page breaks for controlling whitespace and flow.
+---
+
+## SpacerElement
+
+`SpacerElement` adds vertical whitespace between elements.
+
+```java
+c.add(new SpacerElement(20));              // 20 pt gap
+c.add(new SpacerElement(5, Unit.MM));     // 5 mm gap
+```
+
+Negative values are clamped to zero. If you want a consistent gap between all children in a column, `.spacing(float)` on `ColumnElement` is usually more convenient than adding individual spacers.
+
+## SeparatorElement
+
+`SeparatorElement` draws a horizontal rule. It is useful for visually separating sections of content.
+
+```java
+c.add(new SeparatorElement());  // 0.5 pt grey line with 4 pt margin on each side
+```
+
+Customize it as needed:
+
+```java
+c.add(new SeparatorElement()
+    .color(Colors.GREEN_600)
+    .lineWidth(1.5f)
+    .marginTop(12)
+    .marginBottom(8)
+);
+```
+
+All sizing methods accept an optional `Unit`:
+
+```java
+c.add(new SeparatorElement()
+    .marginV(3, Unit.MM)
+    .lineWidth(0.5f, Unit.MM)
+);
+```
+
+| Method                    | What it does                              |
+| ------------------------- | ----------------------------------------- |
+| `.color(KawaColor)`       | Sets the line color                       |
+| `.lineWidth(float)`       | Sets the line thickness in points         |
+| `.lineWidth(float, Unit)` | Sets the line thickness in the given unit |
+| `.marginTop(float)`       | Sets the space above the line             |
+| `.marginBottom(float)`    | Sets the space below the line             |
+| `.marginV(float)`         | Sets the same top and bottom margin       |
+
+## PageBreakElement
+
+`PageBreakElement` forces a new page. Everything after it in the column starts at the top of the next page.
+
+```java
+content(c -> {
+    c.item().text("Chapter 1");
+    // ... chapter 1 content
+
+    c.add(new PageBreakElement());
+
+    c.item().text("Chapter 2");
+    // ... chapter 2 content
+});
+```
+
+<Callout>
+  `PageBreakElement` has zero height — it acts as a signal to the paginator, not as a spacer. The
+  paginator detects it and opens a new page at exactly that point in the content stream.
+</Callout>

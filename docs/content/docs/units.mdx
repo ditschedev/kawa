@@ -1,0 +1,75 @@
+---
+title: Units
+description: All measurements default to points. Pass a Unit alongside any float to express it in another unit.
+---
+
+All raw `float` values in Kawa are **points** — the native PDF unit where 1 pt = 1/72 inch. You never need to convert manually; just pass a `Unit` as the second argument to any method that accepts one.
+
+```java
+import io.kawa.units.Unit;
+
+new SpacerElement(5, Unit.MM)
+page.margin(2, Unit.CM)
+StyleSheet.of(s -> s.paddingH(1, Unit.CM))
+ImageElement.ofResource("/logo.svg").width(6, Unit.CM)
+```
+
+When no unit is given the value is treated as points, so existing bare-float code is unchanged.
+
+## Available units
+
+| Constant  | Name                | Points per unit |
+| --------- | ------------------- | --------------- |
+| `Unit.PT` | Points (default)    | 1 pt            |
+| `Unit.MM` | Millimetres         | ≈ 2.835 pt      |
+| `Unit.CM` | Centimetres         | ≈ 28.35 pt      |
+| `Unit.IN` | Inches              | 72 pt           |
+| `Unit.PX` | CSS pixels (96 dpi) | 0.75 pt         |
+
+## Where units are accepted
+
+Every method that takes a `float` measurement has a `(float, Unit)` overload. A few common examples:
+
+```java
+// Page margins
+page.margin(2, Unit.CM)
+page.marginX(15, Unit.MM)
+page.marginTop(10, Unit.MM)
+
+// Custom page size
+PageSize.custom(80, 200, Unit.MM)    // 80 × 200 mm roll
+
+// StyleSheet padding and borders
+StyleSheet.of(s -> s
+    .padding(5, Unit.MM)
+    .paddingH(1, Unit.CM)
+    .border(0.5f, Unit.MM, Colors.GRAY_300)
+)
+
+// Spacer
+new SpacerElement(8, Unit.MM)
+
+// Row / column widths and gaps
+row.fixedColumn(50, Unit.MM, element)
+row.spacing(3, Unit.MM)
+col.spacing(4, Unit.MM)
+
+// Image, QR code, barcode
+ImageElement.ofResource("/logo.png").fixed(60, 20, Unit.MM)
+ImageElement.ofResource("/logo.svg").width(6, Unit.CM)
+new QrCodeElement("https://...").size(32, Unit.MM)
+new BarcodeElement("1234567890").width(80, Unit.MM).height(15, Unit.MM)
+
+// Table column widths
+table.columns(cols -> {
+    cols.fixed(40, Unit.MM);
+    cols.relative(1);
+})
+
+// Input fields
+new InputElement("signature").height(15, Unit.MM)
+```
+
+<Callout>
+  A standard A4 page is 595 × 842 pt (210 × 297 mm). US Letter is 612 × 792 pt (216 × 279 mm).
+</Callout>

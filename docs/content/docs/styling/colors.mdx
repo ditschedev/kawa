@@ -1,0 +1,101 @@
+---
+title: Colors
+description: Kawa ships with a built-in Tailwind-inspired color palette.
+---
+
+The `Colors` class provides named color constants organized into scales. Each scale runs from `50` (lightest) to `950` (darkest), following the same naming as Tailwind CSS v4. Click any swatch to copy its constant name.
+
+<ColorPalette />
+
+```java
+import io.kawa.style.Colors;
+
+element.color(Colors.BLUE_600);
+StyleSheet.of(s -> s.background(Colors.GRAY_50).border(1f, Colors.GRAY_200));
+```
+
+## Available scales
+
+| Scale    | Shades                                | Color space |
+| -------- | ------------------------------------- | ----------- |
+| `RED`    | 50–950                                | OKLCh       |
+| `ORANGE` | 50–950                                | sRGB hex    |
+| `AMBER`  | 50–950                                | sRGB hex    |
+| `YELLOW` | 50–950                                | sRGB hex    |
+| `LIME`   | 50–950                                | sRGB hex    |
+| `GRAY`   | 50–900                                | OKLCh       |
+| `SLATE`  | 50–950                                | OKLCh       |
+| `ZINC`   | 50–950                                | OKLCh       |
+| `BLUE`   | 50–900                                | sRGB hex    |
+| `GREEN`  | 50, 100, 200, 300, 500, 600, 700, 900 | sRGB hex    |
+| `INDIGO` | 50, 100, 500, 600, 700, 900           | sRGB hex    |
+| Neutral  | `WHITE`, `BLACK`                      | —           |
+
+## Combinations that work well
+
+These pairings work well for info boxes, badges, and table headers:
+
+```java
+// Blue / info
+background: Colors.BLUE_50
+border:     Colors.BLUE_200
+text:       Colors.BLUE_900
+
+// Green / success
+background: Colors.GREEN_50
+border:     Colors.GREEN_200
+text:       Colors.GREEN_700
+
+// Neutral card
+background: Colors.GRAY_50
+border:     Colors.GRAY_200
+text:       Colors.GRAY_700
+
+// Yellow / warning
+background: Colors.YELLOW_50
+border:     Colors.YELLOW_300
+text:       Colors.YELLOW_900
+```
+
+## Custom colors
+
+Anywhere Kawa accepts a color you can create a `KawaColor` directly:
+
+```java
+import io.kawa.style.KawaColor;
+
+// Hex (6-digit RGB or 8-digit RRGGBBAA)
+KawaColor.hex("#22C55E")
+KawaColor.hex("#22C55E80")          // 50% opacity
+
+// RGB / RGBA (0–255 components)
+KawaColor.rgb(34, 139, 87)
+KawaColor.rgba(34, 139, 87, 128)    // 50% opacity
+
+// HSL / HSLA (hue 0–360°, saturation/lightness 0–1, alpha 0–255)
+KawaColor.hsl(147f, 0.5f, 0.43f)
+KawaColor.hsla(147f, 0.5f, 0.43f, 128)
+
+// OKLCh / OKLCha (L 0–100%, C chroma, h hue 0–360°, alpha 0–255)
+KawaColor.oklch(63.7f, 0.237f, 25.3f)
+KawaColor.oklcha(63.7f, 0.237f, 25.3f, 128)
+```
+
+## Alpha transparency
+
+Every `KawaColor` carries an alpha channel (0 = fully transparent, 255 = fully opaque). All factory methods default to fully opaque. Use `withAlpha` to derive a translucent copy from any existing color:
+
+```java
+// Derive a translucent variant of a palette color
+KawaColor semi = Colors.BLUE_500.withAlpha(128);          // integer 0–255
+KawaColor tenth = Colors.BLUE_500.withAlpha(0.1f);        // float fraction 0.0–1.0
+
+// Or specify alpha up front
+KawaColor overlay = KawaColor.rgba(0, 0, 0, 64);          // dark scrim at 25%
+KawaColor tint    = KawaColor.hex("#3B82F640");            // 8-digit RRGGBBAA hex
+```
+
+<Callout>
+  PDFBox transparency support depends on the PDF renderer and viewer. For reliable rendering use
+  fully opaque colors where possible.
+</Callout>

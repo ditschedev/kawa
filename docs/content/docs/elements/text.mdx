@@ -1,0 +1,79 @@
+---
+title: Text Elements
+description: TextElement for plain text and RichTextElement for paragraphs with mixed inline styles.
+---
+
+## TextElement
+
+`TextElement` renders a block of text that wraps automatically to the available width.
+
+```java
+c.item().text("The quick brown fox jumps over the lazy dog.")
+    .fontSize(11)
+    .semiBold()
+    .color(Colors.GRAY_800)
+    .lineHeight(1.6f)
+    .centerAlign();
+```
+
+You can also construct one directly and pass it to `.add()`:
+
+```java
+c.add(new TextElement("Hello World").fontSize(14).bold());
+```
+
+### Common methods
+
+| Method               | What it does                     |
+| -------------------- | -------------------------------- |
+| `.fontSize(float)`   | Sets the font size in points     |
+| `.weight(int)`       | Sets the font weight (100–900)   |
+| `.light()`           | Weight 300                       |
+| `.medium()`          | Weight 500                       |
+| `.semiBold()`        | Weight 600                       |
+| `.bold()`            | Weight 700                       |
+| `.italic()`          | Enables the italic axis          |
+| `.regular()`         | Resets to weight 400, not italic |
+| `.color(KawaColor)`  | Sets the text color              |
+| `.leftAlign()`       | Aligns the text to the left      |
+| `.centerAlign()`     | Centers the text                 |
+| `.rightAlign()`      | Aligns the text to the right     |
+| `.lineHeight(float)` | Sets the line-height multiplier  |
+| `.font(KawaFont)`    | Applies a custom font            |
+
+Weight and italic are independent axes — any combination is valid:
+
+```java
+c.text("Semi-bold italic").semiBold().italic();
+c.text("Light body").light();
+c.text("Custom weight").weight(650);
+```
+
+## RichTextElement
+
+`RichTextElement` lets you mix different styles within a single paragraph. Each `.span()` call adds a run of text with its own styling:
+
+```java
+c.add(new RichTextElement()
+    .span("Total: ", s -> s.fontSize(11))
+    .span("1,490.00 EUR", s -> s.fontSize(11).semiBold().color(Colors.GREEN_700))
+    .span("  (incl. VAT)", s -> s.fontSize(9).color(Colors.GRAY_500))
+);
+```
+
+Spans flow inline and wrap across lines just like a normal paragraph:
+
+```java
+c.add(new RichTextElement()
+    .span("Thank you for your order. We will ship within ")
+    .span("2 to 3 business days", s -> s.semiBold())
+    .span(". Please contact us if you have any questions.")
+);
+```
+
+Each span supports the same weight methods as `TextElement`: `.bold()`, `.semiBold()`, `.medium()`, `.weight(int)`, `.italic()`.
+
+<Callout>
+  A `RichTextElement` with no spans measures zero height and renders nothing, so it is safe to add
+  conditionally.
+</Callout>

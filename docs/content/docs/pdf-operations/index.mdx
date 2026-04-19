@@ -1,0 +1,71 @@
+---
+title: Loading and Inspecting PDFs
+description: Load, inspect, and post-process existing PDF files with PdfDocument.
+---
+
+`PdfDocument` is a fluent pipeline for working with existing PDF files. You can merge documents, select pages, encrypt, and decrypt without going through the document composition API.
+
+## Loading a PDF
+
+```java
+// From a file
+PdfDocument.load(new File("input.pdf"))
+
+// From a byte array
+PdfDocument.load(pdfBytes)
+
+// Password-protected
+PdfDocument.load(new File("protected.pdf"), "password")
+PdfDocument.load(pdfBytes, "password")
+
+// Start with an empty document
+PdfDocument.create()
+```
+
+## Saving the result
+
+```java
+op.save(new File("output.pdf"));
+op.save(outputStream);
+
+byte[] bytes = op.saveBytes();
+```
+
+You can also pass save options:
+
+```java
+op.save(new File("output.pdf"), PdfSaveOptions.standard());
+op.saveBytes(PdfSaveOptions.builder().compress(true).build());
+```
+
+## Resource management
+
+`PdfDocument` implements `Closeable`, so use try-with-resources to make sure the underlying document gets closed:
+
+```java
+try (PdfDocument op = PdfDocument.load(new File("input.pdf"))) {
+    byte[] result = op.pages("2-5").saveBytes();
+}
+```
+
+## Inspecting a document
+
+```java
+try (PdfDocument op = PdfDocument.load(file)) {
+    int pages    = op.pageCount();
+    boolean enc  = op.isEncrypted();
+}
+```
+
+<Cards>
+  <Card
+    title="Merging"
+    href="/docs/pdf-operations/merging"
+    description="Combine multiple PDFs and select which pages to include."
+  />
+  <Card
+    title="Security"
+    href="/docs/pdf-operations/security"
+    description="Encrypt and decrypt PDFs with fine-grained permissions."
+  />
+</Cards>

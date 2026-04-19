@@ -1,0 +1,94 @@
+---
+title: Security
+description: Encrypt PDFs with AES-256 and configurable permissions, or remove encryption entirely.
+---
+
+## Encrypting a PDF
+
+Call `.encrypt()` with an owner password, a user password, and a `PdfPermissions` value:
+
+```java
+try (PdfDocument op = PdfDocument.load(new File("document.pdf"))) {
+    op.encrypt("owner-secret", "user-secret", PdfPermissions.fullAccess())
+      .save(new File("document-encrypted.pdf"));
+}
+```
+
+Kawa uses AES-256 encryption. The owner password grants unrestricted access. The user password lets someone open the document but with the restrictions you defined in `PdfPermissions`.
+
+### Configuring permissions
+
+`PdfPermissions.fullAccess()` allows everything. Use the builder to restrict what users can do:
+
+```java
+PdfPermissions restricted = PdfPermissions.builder()
+    .allowPrint(true)
+    .allowModify(false)
+    .allowExtractContent(false)
+    .allowModifyAnnotations(false)
+    .allowFillInForm(true)
+    .allowPrintFaithful(true)
+    .build();
+
+op.encrypt("owner", "user", restricted);
+```
+
+The builder methods you will typically use are:
+
+| Builder method                           | What it controls                                   |
+| ---------------------------------------- | -------------------------------------------------- |
+| `.allowPrint(boolean)`                   | Allows printing at any quality                     |
+| `.allowPrintFaithful(boolean)`           | Allows high-quality printing                       |
+| `.allowModify(boolean)`                  | Allows modifying the document contents             |
+| `.allowExtractContent(boolean)`          | Allows copying text and images out of the document |
+| `.allowModifyAnnotations(boolean)`       | Allows adding or editing annotations               |
+| `.allowFillInForm(boolean)`              | Allows filling in form fields                      |
+| `.allowAssembleDocument(boolean)`        | Allows inserting, rotating, or deleting pages      |
+| `.allowExtractForAccessibility(boolean)` | Allows screen-reader content extraction            |
+
+<Callout type="warn">
+  The owner password must not be blank. Passing an empty string throws an
+  `IllegalArgumentException`.
+</Callout>
+
+## Opening an encrypted file
+
+Pass the password when loading:
+
+```java
+PdfDocument.load(new File("encrypted.pdf"), "user-secret")
+PdfDocument.load(encryptedBytes, "user-secret")
+```
+
+## Removing encryption
+
+Load with the password, call `.decrypt()`, and save:
+
+```java
+try (PdfDocument op = PdfDocument.load(new File("encrypted.pdf"), "user-secret")) {
+    op.decrypt().save(new File("decrypted.pdf"));
+}
+```
+
+## Full example
+
+```java
+// Encrypt a report and restrict printing and copying
+byte[] encrypted;
+try (PdfDocument op = PdfDocument.load(new File("report.pdf"))) {
+    encrypted = op.encrypt(
+        "owner-pass",
+        "reader-pass",
+        PdfPermissions.builder()
+            .allowPrint(true)
+            .allowModify(false)
+            .allowExtractContent(false)
+            .build()
+    ).saveBytes();
+}
+
+// Later: remove the encryption
+try (PdfDocument op = PdfDocument.load(encrypted, "reader-pass")) {
+    op.decrypt().save(new File("report-unlocked.pdf"));
+}
+```

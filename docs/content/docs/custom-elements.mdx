@@ -1,0 +1,169 @@
+---
+title: Custom Elements
+description: Implement your own elements and plug them into the layout pipeline.
+---
+
+Kawa lets you write your own element and drop it anywhere a built-in element would go. Your element participates in the same measurement and rendering pipeline, so pagination, page breaks, and nested layout all work exactly as expected.
+
+## The ElementRenderer interface
+
+Implement `ElementRenderer` to define your element's behavior:
+
+```java
+import io.kawa.elements.ElementRenderer;
+import io.kawa.renderer.DrawContext;
+
+public class SignatureLine implements ElementRenderer {
+
+    private static final float HEIGHT = 40f;
+
+    @Override
+    public float measure(float availableWidth) {
+        return HEIGHT;
+    }
+
+    @Override
+    public void render(DrawContext ctx) throws Exception {
+        float lineY = ctx.getY() + HEIGHT - 8f;
+        ctx.drawLine(ctx.getX(), lineY, ctx.getX() + 180f, lineY,
+                     Colors.GRAY_500, 0.5f);
+        ctx.drawText("Signature", ctx.getX(), ctx.getY() + HEIGHT - 2f, 8f,
+                     Colors.GRAY_500);
+    }
+}
+```
+
+`measure()` is called first to determine how much vertical space your element needs. Return a fixed value, or compute it from `availableWidth` if the height depends on the content.
+
+`render()` is called with a `DrawContext` that tells you where to draw and gives you the drawing primitives.
+
+## Using your element
+
+Wrap the renderer in a `CustomElement` and add it like any other element:
+
+```java
+c.add(new CustomElement(new SignatureLine()));
+
+// Inline with a lambda (for simple cases)
+c.add(new CustomElement(ctx -> {
+    ctx.drawRect(ctx.getX(), ctx.getY(), ctx.getWidth(), 2f, Colors.GRAY_300);
+}));
+
+// Via the slot builder
+c.item().custom(new SignatureLine());
+```
+
+## DrawContext reference
+
+`DrawContext` wraps the available area and provides drawing helpers. All coordinates use a top-left origin.
+
+| Method                                        | What it does                                                                       |
+| --------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `.getX()`                                     | Returns the left edge of the available area in points                              |
+| `.getY()`                                     | Returns the top edge of the available area in points                               |
+| `.getWidth()`                                 | Returns the available width in points                                              |
+| `.getHeight()`                                | Returns the available height in points                                             |
+| `.drawText(text, x, y, fontSize, color)`      | Draws text at the given position with a color                                      |
+| `.drawText(text, x, y, fontSize)`             | Draws text in black                                                                |
+| `.drawRect(x, y, width, height, color)`       | Draws a filled rectangle                                                           |
+| `.drawLine(x1, y1, x2, y2, color, lineWidth)` | Draws a straight line                                                              |
+| `.measureText(text, fontSize)`                | Measures text width in points using the default font                               |
+| `.getDefaultFont()`                           | Returns the default Helvetica regular `PDFont`                                     |
+| `.getBoldFont()`                              | Returns the default Helvetica bold `PDFont`                                        |
+| `.getContentStream()`                         | Returns the raw PDFBox content stream; PDFBox coordinates use a bottom-left origin |
+| `.getRenderContext()`                         | Returns the underlying `RenderContext` for lower-level access                      |
+
+## Reusable element classes
+
+For elements you use in more than one place, create a class rather than a lambda:
+
+```java
+public class StatusBadge implements ElementRenderer {
+
+    private final String label;
+    private final KawaColor background;
+    private static final float HEIGHT = 18f;
+    private static final float PADDING = 6f;
+
+    public StatusBadge(String label, KawaColor background) {
+        this.label      = label;
+        this.background = background;
+    }
+
+    @Override
+    public float measure(float availableWidth) {
+        return HEIGHT;
+    }
+
+    @Override
+    public void render(DrawContext ctx) throws Exception {
+        float textWidth = ctx.measureText(label, 8f);
+        float boxWidth  = textWidth + PADDING * 2;
+
+        ctx.drawRect(ctx.getX(), ctx.getY(), boxWidth, HEIGHT, background);
+        ctx.drawText(label, ctx.getX() + PADDING, ctx.getY() + 12f, 8f, Colors.WHITE);
+    }
+}
+```
+
+Use it anywhere:
+
+```java
+c.add(new CustomElement(new StatusBadge("PAID", Colors.GREEN_500)));
+c.add(new CustomElement(new StatusBadge("OVERDUE", Colors.RED_500)));
+```
+
+## Page-spanning elements
+
+If your element can be taller than a single page, override `renderSlice()`. It receives `offsetY` (how many points into the element the current page starts) and `availableHeight` (how many points remain on the page).
+
+```java
+@Override
+public void renderSlice(DrawContext ctx, float offsetY, float availableHeight) throws Exception {
+    // render only the portion of your content that falls within
+    // [offsetY, offsetY + availableHeight] in element space
+}
+```
+
+<Callout>
+  For most elements, the default `renderSlice()` calls `render()` and is all you need. Only override
+  it when your element has internal structure that needs to be split across pages, similar to how
+  `ColumnElement` skips children that are outside the visible slice.
+</Callout>
+
+## Complete example
+
+A custom progress bar that you can embed inline in any document:
+
+```java
+public class ProgressBar implements ElementRenderer {
+
+    private final float percent;   // 0.0 – 1.0
+    private final KawaColor fill;
+    private final KawaColor track;
+
+    public ProgressBar(float percent) {
+        this.percent = Math.max(0f, Math.min(1f, percent));
+        this.fill    = Colors.BLUE_500;
+        this.track   = Colors.GRAY_200;
+    }
+
+    @Override
+    public float measure(float availableWidth) {
+        return 12f;
+    }
+
+    @Override
+    public void render(DrawContext ctx) throws Exception {
+        ctx.drawRect(ctx.getX(), ctx.getY(), ctx.getWidth(), 12f, track);
+        if (percent > 0f) {
+            ctx.drawRect(ctx.getX(), ctx.getY(), ctx.getWidth() * percent, 12f, fill);
+        }
+    }
+}
+
+// Usage
+c.item().text("Project completion").bold().fontSize(10);
+c.add(new SpacerElement(4));
+c.add(new CustomElement(new ProgressBar(0.72f)));
+```

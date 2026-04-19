@@ -1,0 +1,48 @@
+---
+title: Introduction
+description: Kawa is a Java library for building and manipulating PDF documents with a fluent API.
+---
+
+Kawa lets you build PDF reports programmatically without touching any low-level PDF code. You describe what you want on the page and Kawa handles layout, pagination, and rendering.
+
+<Callout type="warning">
+  Kawa v1 is still in development. The API is not stable yet and may change at any time until the
+  first stable release.
+</Callout>
+
+## What you can do with it
+
+- Compose pages with text, tables, images, QR codes, barcodes, and form fields
+- Automatic pagination when content overflows a page
+- Custom fonts, a built-in color palette, and reusable styles
+- Merge, reorder, encrypt, and decrypt existing PDFs
+- Work in any unit you prefer: points, mm, cm, inches, or pixels
+
+## Under the hood
+
+Kawa is built on [Apache PDFBox 3](https://pdfbox.apache.org/). You never need to interact with PDFBox directly.
+
+## Where to go next
+
+<Cards>
+  <Card
+    title="Getting Started"
+    href="/docs/getting-started"
+    description="Add Kawa to your project and render your first document."
+  />
+  <Card
+    title="Document API"
+    href="/docs/document"
+    description="How to compose pages, headers, footers, and metadata."
+  />
+  <Card
+    title="Elements"
+    href="/docs/elements"
+    description="The full element library: text, tables, images, and more."
+  />
+  <Card
+    title="PDF Manipulation"
+    href="/docs/pdf-operations"
+    description="Merge, reorder, encrypt, and inspect existing PDF files."
+  />
+</Cards>

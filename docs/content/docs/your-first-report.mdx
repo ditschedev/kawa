@@ -1,0 +1,372 @@
+---
+title: Your First Report
+description: Build a simple invoice report class from scratch.
+---
+
+This tutorial walks through building a reusable invoice report. By the end you will have a class that takes invoice data, produces a properly laid out PDF, and can be called from anywhere in your application.
+
+<Callout>
+  Kawa requires **Java 17 or later**. Make sure your project is set up accordingly before you start.
+</Callout>
+
+## What we are building
+
+A single-page A4 invoice with:
+
+- A header showing your company name and the invoice number
+- A "bill to" block with the client's name and address
+- A line items table with quantities and prices
+- A totals row at the bottom of the table
+- A simple footer with payment terms
+
+## Step 1: Create the class
+
+Create a new class and implement `KawaDocument`. The interface has two required methods: `configure` for metadata and `compose` for the actual layout.
+
+```java
+import io.kawa.core.*;
+import io.kawa.elements.*;
+
+import io.kawa.style.Colors;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+public class InvoiceReport implements KawaDocument {
+
+    public record LineItem(String description, int quantity, double unitPrice) {
+        public double total() { return quantity * unitPrice; }
+    }
+
+    private final String invoiceNumber;
+    private final LocalDate date;
+    private final String clientName;
+    private final String clientAddress;
+    private final List<LineItem> items;
+
+    public InvoiceReport(
+            String invoiceNumber,
+            LocalDate date,
+            String clientName,
+            String clientAddress,
+            List<LineItem> items) {
+        this.invoiceNumber  = invoiceNumber;
+        this.date           = date;
+        this.clientName     = clientName;
+        this.clientAddress  = clientAddress;
+        this.items          = items;
+    }
+}
+```
+
+## Step 2: Set the document metadata
+
+The `configure` method sets the PDF file metadata. This shows up in the reader's document info panel and in the file name when saving.
+
+```java
+private static final DateTimeFormatter DATE_FMT =
+        DateTimeFormatter.ofPattern("MMMM d, yyyy");
+
+@Override
+public void configure(DocumentSettings settings) {
+    settings.title("Invoice " + invoiceNumber)
+            .author("ACME GmbH")
+            .subject("Invoice");
+}
+```
+
+## Step 3: Define the page layout
+
+The `compose` method receives a `PageDefinition`. This is where you set the page size, margins, and wire up the header, footer, and content.
+
+```java
+@Override
+public void compose(PageDefinition page) {
+    page.size(PageSize.A4)
+        .marginTop(50).marginBottom(50)
+        .marginLeft(60).marginRight(60)
+        .header(this::buildHeader)
+        .footer(this::buildFooter)
+        .content(this::buildContent);
+}
+```
+
+<Callout>
+  Splitting the layout into private methods (`buildHeader`, `buildFooter`, `buildContent`) keeps
+  `compose` readable and makes each section easy to adjust independently.
+</Callout>
+
+## Step 4: Build the header
+
+The header receives a `ColumnElement`. Use a `RowElement` inside it to put your company name on the left and the invoice details on the right.
+
+```java
+private static final KawaColor MUTED = Colors.GRAY_500;
+
+private void buildHeader(ColumnElement h) {
+    h.add(new RowElement(row -> {
+        row.fillColumn(left -> {
+            left.text("ACME GmbH").bold().fontSize(16);
+            left.text("hello@acme.example").fontSize(9).color(MUTED);
+        });
+        row.fixedColumn(140, right -> {
+            right.text("Invoice " + invoiceNumber).bold().fontSize(10).rightAlign();
+            right.text(date.format(DATE_FMT)).fontSize(9).color(MUTED).rightAlign();
+        });
+    }));
+    h.add(new SeparatorElement().marginTop(8).marginBottom(0));
+}
+```
+
+## Step 5: Add the bill-to block and line items
+
+The content method gets the main `ColumnElement` for the page. Start with the client block, then add a spacer, then the table.
+
+```java
+private void buildContent(ColumnElement c) {
+    // Bill to
+    c.item().text("Bill to").fontSize(9).color(MUTED);
+    c.item().text(clientName).bold().fontSize(11);
+    c.item().text(clientAddress).fontSize(10).color(MUTED);
+
+    c.item().spacer(24);
+
+    // Line items
+    c.item().table(table -> {
+        table.columns(cols -> {
+            cols.relative(4);   // description gets most of the space
+            cols.relative(1);   // quantity
+            cols.fixed(90);     // unit price
+            cols.fixed(90);     // total
+        });
+
+        table.header(h -> {
+            h.cell("Description").bold();
+            h.cell("Qty").bold().centerAlign();
+            h.cell("Unit price").bold().rightAlign();
+            h.cell("Total").bold().rightAlign();
+        });
+
+        for (LineItem item : items) {
+            table.row(r -> {
+                r.cell(item.description());
+                r.cell(String.valueOf(item.quantity())).centerAlign();
+                r.cell(formatMoney(item.unitPrice())).rightAlign();
+                r.cell(formatMoney(item.total())).rightAlign();
+            });
+        }
+
+        // Totals row
+        double grandTotal = items.stream().mapToDouble(LineItem::total).sum();
+        table.row(r -> {
+            r.cell("").borderTop(1f, Colors.BLACK);
+            r.cell("").borderTop(1f, Colors.BLACK);
+            r.cell("Total").bold().rightAlign().borderTop(1f, Colors.BLACK);
+            r.cell(formatMoney(grandTotal)).bold().rightAlign().borderTop(1f, Colors.BLACK);
+        });
+    })
+    .cellPadding(7)
+    .alternateRowColor(Colors.GRAY_50)
+    .borderColor(Colors.GRAY_300);
+}
+
+private static String formatMoney(double amount) {
+    return String.format("EUR %.2f", amount);
+}
+```
+
+<Callout>
+  The totals row uses an empty cell with `.borderTop()` on each column to draw a dividing line above
+  the final row without adding a separate separator element.
+</Callout>
+
+## Step 6: Add the footer
+
+The footer uses the two-argument form so you can access the page number through `PageContext`.
+
+```java
+private void buildFooter(ColumnElement f, PageContext ctx) {
+    f.add(new SeparatorElement().marginTop(0).marginBottom(6));
+    f.add(new RowElement(row -> {
+        row.fillColumn(left ->
+            left.text("Payment due within 30 days.").fontSize(8).color(MUTED)
+        );
+        row.fixedColumn(60, right ->
+            right.text("Page " + ctx.pageOf()).fontSize(8).color(MUTED).rightAlign()
+        );
+    }));
+}
+```
+
+## Step 7: Generate the PDF
+
+Instantiate the report with your data and call `generatePdf`.
+
+```java
+List<InvoiceReport.LineItem> items = List.of(
+    new InvoiceReport.LineItem("Backend development", 8, 120.00),
+    new InvoiceReport.LineItem("Code review",         2, 120.00),
+    new InvoiceReport.LineItem("Deployment setup",    3, 120.00)
+);
+
+new InvoiceReport(
+    "INV-2025-001",
+    LocalDate.now(),
+    "TechStart GmbH",
+    "Berliner Str. 12, 10115 Berlin",
+    items
+).generatePdf("invoice.pdf");
+```
+
+## The complete class
+
+Here is everything together:
+
+```java
+import io.kawa.core.*;
+import io.kawa.elements.*;
+
+import io.kawa.style.Colors;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+public class InvoiceReport implements KawaDocument {
+
+    public record LineItem(String description, int quantity, double unitPrice) {
+        public double total() { return quantity * unitPrice; }
+    }
+
+    private static final DateTimeFormatter DATE_FMT =
+            DateTimeFormatter.ofPattern("MMMM d, yyyy");
+    private static final KawaColor MUTED = Colors.GRAY_500;
+
+    private final String invoiceNumber;
+    private final LocalDate date;
+    private final String clientName;
+    private final String clientAddress;
+    private final List<LineItem> items;
+
+    public InvoiceReport(String invoiceNumber, LocalDate date,
+                         String clientName, String clientAddress,
+                         List<LineItem> items) {
+        this.invoiceNumber = invoiceNumber;
+        this.date          = date;
+        this.clientName    = clientName;
+        this.clientAddress = clientAddress;
+        this.items         = items;
+    }
+
+    @Override
+    public void configure(DocumentSettings settings) {
+        settings.title("Invoice " + invoiceNumber)
+                .author("ACME GmbH")
+                .subject("Invoice");
+    }
+
+    @Override
+    public void compose(PageDefinition page) {
+        page.size(PageSize.A4)
+            .marginTop(50).marginBottom(50)
+            .marginLeft(60).marginRight(60)
+            .header(this::buildHeader)
+            .footer(this::buildFooter)
+            .content(this::buildContent);
+    }
+
+    private void buildHeader(ColumnElement h) {
+        h.add(new RowElement(row -> {
+            row.fillColumn(left -> {
+                left.text("ACME GmbH").bold().fontSize(16);
+                left.text("hello@acme.example").fontSize(9).color(MUTED);
+            });
+            row.fixedColumn(140, right -> {
+                right.text("Invoice " + invoiceNumber).bold().fontSize(10).rightAlign();
+                right.text(date.format(DATE_FMT)).fontSize(9).color(MUTED).rightAlign();
+            });
+        }));
+        h.add(new SeparatorElement().marginTop(8).marginBottom(0));
+    }
+
+    private void buildContent(ColumnElement c) {
+        c.item().text("Bill to").fontSize(9).color(MUTED);
+        c.item().text(clientName).bold().fontSize(11);
+        c.item().text(clientAddress).fontSize(10).color(MUTED);
+        c.item().spacer(24);
+
+        c.item().table(table -> {
+            table.columns(cols -> {
+                cols.relative(4);
+                cols.relative(1);
+                cols.fixed(90);
+                cols.fixed(90);
+            });
+
+            table.header(h -> {
+                h.cell("Description").bold();
+                h.cell("Qty").bold().centerAlign();
+                h.cell("Unit price").bold().rightAlign();
+                h.cell("Total").bold().rightAlign();
+            });
+
+            for (LineItem item : items) {
+                table.row(r -> {
+                    r.cell(item.description());
+                    r.cell(String.valueOf(item.quantity())).centerAlign();
+                    r.cell(formatMoney(item.unitPrice())).rightAlign();
+                    r.cell(formatMoney(item.total())).rightAlign();
+                });
+            }
+
+            double grandTotal = items.stream().mapToDouble(LineItem::total).sum();
+            table.row(r -> {
+                r.cell("").borderTop(1f, Colors.BLACK);
+                r.cell("").borderTop(1f, Colors.BLACK);
+                r.cell("Total").bold().rightAlign().borderTop(1f, Colors.BLACK);
+                r.cell(formatMoney(grandTotal)).bold().rightAlign().borderTop(1f, Colors.BLACK);
+            });
+        })
+        .cellPadding(7)
+        .alternateRowColor(Colors.GRAY_50)
+        .borderColor(Colors.GRAY_300);
+    }
+
+    private void buildFooter(ColumnElement f, PageContext ctx) {
+        f.add(new SeparatorElement().marginTop(0).marginBottom(6));
+        f.add(new RowElement(row -> {
+            row.fillColumn(left ->
+                left.text("Payment due within 30 days.").fontSize(8).color(MUTED)
+            );
+            row.fixedColumn(60, right ->
+                right.text("Page " + ctx.pageOf()).fontSize(8).color(MUTED).rightAlign()
+            );
+        }));
+    }
+
+    private static String formatMoney(double amount) {
+        return String.format("EUR %.2f", amount);
+    }
+}
+```
+
+## Where to go next
+
+Now that you have a working report class, here are some natural next steps:
+
+<Cards>
+  <Card
+    title="Styling"
+    href="/docs/styling/stylesheet"
+    description="Use StyleSheet to give your table headers and cells a consistent look."
+  />
+  <Card
+    title="Fonts"
+    href="/docs/styling/fonts"
+    description="Load a custom font and apply it throughout the report."
+  />
+  <Card
+    title="PDF Manipulation"
+    href="/docs/pdf-operations"
+    description="Merge this invoice with a cover page or add encryption."
+  />
+</Cards>
