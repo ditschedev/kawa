@@ -20,6 +20,10 @@ class KawaRenderer {
     this.pageDef = pageDef;
     this.settings = settings;
     this.afterGenerationHook = afterGenerationHook;
+
+    // Disable PDFBox logging to avoid spamming the console with warnings about missing fonts, etc.
+    java.util.logging.Logger
+      .getLogger("org.apache.pdfbox").setLevel(java.util.logging.Level.OFF);
   }
 
   void renderToFile(File file) throws IOException {
