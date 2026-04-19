@@ -27,7 +27,7 @@ jobs:
           mvn versions:set -DnewVersion=$VERSION -DgenerateBackupPoms=false
 
       - name: Build & stage artifacts
-        run: mvn --batch-mode -Ppublish clean deploy -DskipTests -DaltDeploymentRepository=local::file:./target/staging-deploy
+        run: mvn --batch-mode -Ppublish clean deploy -DskipTests -Dcentral.publishing.skip=true -DaltDeploymentRepository=local::file:./target/staging-deploy
 
       - name: Release with JReleaser
         run: mvn jreleaser:full-release
