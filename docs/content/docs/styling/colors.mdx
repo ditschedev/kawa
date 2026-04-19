@@ -8,7 +8,7 @@ The `Colors` class provides named color constants organized into scales. Each sc
 <ColorPalette />
 
 ```java
-import io.kawa.style.Colors;
+import style.dev.ditsche.kawa.Colors;
 
 element.color(Colors.BLUE_600);
 StyleSheet.of(s -> s.background(Colors.GRAY_50).border(1f, Colors.GRAY_200));
@@ -62,7 +62,7 @@ text:       Colors.YELLOW_900
 Anywhere Kawa accepts a color you can create a `KawaColor` directly:
 
 ```java
-import io.kawa.style.KawaColor;
+import style.dev.ditsche.kawa.KawaColor;
 
 // Hex (6-digit RGB or 8-digit RRGGBBAA)
 KawaColor.hex("#22C55E")

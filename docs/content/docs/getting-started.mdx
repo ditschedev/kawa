@@ -28,8 +28,8 @@ Please check the [GitHub releases](https://github.com/ditschedev/kawa/releases) 
 The quickest way to create a PDF is with `Document.create()`:
 
 ```java
-import io.kawa.core.Document;
-import io.kawa.core.PageSize;
+import core.dev.ditsche.kawa.Document;
+import core.dev.ditsche.kawa.PageSize;
 
 Document.create(doc -> {
     doc.title("Hello World");
@@ -50,7 +50,7 @@ Document.create(doc -> {
 If you need to generate the same report with different data, implement `KawaDocument`. This keeps your layout code separate from where you call it.
 
 ```java
-import io.kawa.core.*;
+import dev.ditsche.kawa.core.*;
 
 public class InvoiceReport implements KawaDocument {
 

@@ -6,7 +6,7 @@ description: All measurements default to points. Pass a Unit alongside any float
 All raw `float` values in Kawa are **points** — the native PDF unit where 1 pt = 1/72 inch. You never need to convert manually; just pass a `Unit` as the second argument to any method that accepts one.
 
 ```java
-import io.kawa.units.Unit;
+import units.dev.ditsche.kawa.Unit;
 
 new SpacerElement(5, Unit.MM)
 page.margin(2, Unit.CM)

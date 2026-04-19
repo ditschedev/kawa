@@ -75,7 +75,7 @@ try (PdfDocument source = PdfDocument.load(new File("confidential.pdf"), "passwo
 If you prefer not to use a string spec, you can use `PageSelection` instead:
 
 ```java
-import io.kawa.pdf.PageSelection;
+import pdf.dev.ditsche.kawa.PageSelection;
 
 op.merge(file, PageSelection.of(1, 3, 5))
 op.merge(file, PageSelection.range(2, 8))
