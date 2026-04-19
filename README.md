@@ -7,9 +7,6 @@ Compose reports, invoices, and generated documents with text, tables, images, la
 
 [Read the documentation](https://kawa.ditsche.dev) • [Getting Started](https://kawa.ditsche.dev/docs/getting-started) • [GitHub Releases](https://github.com/ditschedev/kawa/releases)
 
-> [!WARNING]
-> Kawa v1 is still in development. The API is not stable yet and may change at any time until the first stable release.
-
 ## Why Kawa
 
 - Fluent Java API, no templates or XML
@@ -24,7 +21,7 @@ Compose reports, invoices, and generated documents with text, tables, images, la
 <dependency>
   <groupId>dev.ditsche</groupId>
   <artifactId>kawa</artifactId>
-  <version>0.1.1</version>
+  <version>1.0.0</version>
 </dependency>
 ```
 
