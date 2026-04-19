@@ -1,0 +1,76 @@
+---
+title: Form Elements
+description: Fillable input fields and clickable hyperlinks.
+---
+
+## HyperlinkElement
+
+`HyperlinkElement` renders clickable text with a link annotation in the PDF. It works just like `TextElement` visually, but tapping or clicking the text opens the URL.
+
+```java
+c.add(new HyperlinkElement("https://example.com", "Visit our website")
+    .fontSize(11)
+    .color(Colors.BLUE_600)
+);
+```
+
+The first argument is the URL and the second is the visible link text. Any URI scheme works, including `https://`, `mailto:`, and internal PDF destinations.
+
+Common methods:
+
+| Method              | What it does                 |
+| ------------------- | ---------------------------- |
+| `.fontSize(float)`  | Sets the font size in points |
+| `.color(KawaColor)` | Sets the link text color     |
+| `.font(KawaFont)`   | Applies a custom font        |
+
+## InputElement
+
+`InputElement` creates a fillable text field. PDF viewers that support forms let users type into it.
+
+```java
+c.add(new InputElement("firstName")
+    .label("First Name")
+    .height(22)
+);
+```
+
+The constructor argument is the field's internal name, which form-processing tools use to identify and extract the value.
+
+### Multiline fields
+
+```java
+c.add(new InputElement("message")
+    .label("Message")
+    .multiline(80)    // height of the textarea in points
+);
+```
+
+### Styling
+
+```java
+// Underline style instead of a box border
+new InputElement("signature").label("Signature").underline()
+
+// Custom border color
+new InputElement("quantity").borderColor(Colors.BLUE_400)
+
+// Custom background color
+new InputElement("notes").backgroundColor(Colors.YELLOW_50).multiline(55)
+
+// Pre-filled value
+new InputElement("phone").label("Phone").value("+49 ")
+```
+
+### Common methods
+
+| Method                        | What it does                                                    |
+| ----------------------------- | --------------------------------------------------------------- |
+| `.label(String)`              | Sets the label text above the field                             |
+| `.labelFontSize(float)`       | Sets the label font size                                        |
+| `.height(float)`              | Sets the field height                                           |
+| `.multiline(float)`           | Turns the field into a multiline textarea with the given height |
+| `.value(String)`              | Sets a pre-filled default value                                 |
+| `.underline()`                | Renders the field as an underline instead of a box              |
+| `.borderColor(KawaColor)`     | Sets the border color                                           |
+| `.backgroundColor(KawaColor)` | Sets the background fill color                                  |

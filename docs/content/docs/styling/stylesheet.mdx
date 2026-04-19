@@ -1,0 +1,118 @@
+---
+title: StyleSheet and TextStyle
+description: Reusable style definitions for borders, backgrounds, padding, and text.
+---
+
+## StyleSheet
+
+`StyleSheet` holds a set of visual properties that you can apply to `ContainerElement`, `ColumnElement`, and table cells. Define it once and reuse it wherever you need the same look.
+
+```java
+StyleSheet cardStyle = StyleSheet.of(s -> s
+    .background(Colors.GRAY_50)
+    .padding(12f)
+    .border(0.5f, Colors.GRAY_200)
+);
+```
+
+### Padding
+
+```java
+StyleSheet.of(s -> s
+    .padding(10f)        // all sides, in points
+    .paddingH(16f)       // left and right
+    .paddingV(8f)        // top and bottom
+    .paddingTop(4f)
+    .paddingRight(12f)
+    .paddingBottom(4f)
+    .paddingLeft(12f)
+)
+```
+
+Every padding method accepts an optional `Unit` as the second argument:
+
+```java
+.padding(5, Unit.MM)
+.paddingH(1, Unit.CM)
+.paddingV(3, Unit.MM)
+```
+
+### Borders
+
+```java
+StyleSheet.of(s -> s
+    .border(1f, Colors.GRAY_300)           // all sides, in points
+    .borderBottom(1.5f, Colors.BLUE_300)   // one side
+    .borderTop(0.5f, Colors.GRAY_200)
+)
+```
+
+With an explicit unit:
+
+```java
+.border(0.5f, Unit.MM, Colors.GRAY_300)
+.borderLeft(1, Unit.PX, Colors.BLUE_400)
+```
+
+### Background
+
+```java
+StyleSheet.of(s -> s.background(Colors.BLUE_50))
+StyleSheet.of(s -> s.background(KawaColor.hex("#FAF0C8")))
+```
+
+### Where you can apply it
+
+```java
+// ContainerElement
+ContainerElement.of(myStyle).containing(childElement)
+
+// ColumnElement
+col.style(myStyle);
+
+// Table cell
+tableRow.cell().style(myStyle).text("Styled cell");
+```
+
+## TextStyle
+
+`TextStyle` holds text-level properties like font size, weight, color, and line height. You can apply it directly to a `TextElement` or embed it inside a `StyleSheet`.
+
+```java
+TextStyle heading = TextStyle.of(t -> t
+    .fontSize(14f)
+    .bold()
+    .color(Colors.BLUE_900)
+    .lineHeight(1.3f)
+);
+
+heading.applyTo(myTextElement);
+```
+
+### Weight methods
+
+| Method         | Weight |
+| -------------- | ------ |
+| `.light()`     | 300    |
+| `.medium()`    | 500    |
+| `.semiBold()`  | 600    |
+| `.bold()`      | 700    |
+| `.weight(int)` | custom |
+
+### Embedding in a StyleSheet
+
+Useful for table headers and containers where you want the text style and box style in one place:
+
+```java
+StyleSheet headerStyle = StyleSheet.of(s -> s
+    .background(Colors.BLUE_50)
+    .paddingH(12f).paddingV(8f)
+    .textStyle(ts -> ts
+        .semiBold()
+        .color(Colors.BLUE_900)
+        .fontSize(10f)
+    )
+);
+```
+
+When this style is applied to a table cell via `.style(headerStyle)`, the text inside picks up the `TextStyle` properties automatically.

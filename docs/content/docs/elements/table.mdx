@@ -1,0 +1,137 @@
+---
+title: Table
+description: TableElement with typed columns, headers, data rows, and per-cell styling.
+---
+
+`TableElement` renders a table with a defined column structure, an optional header row, and any number of data rows.
+
+## Basic example
+
+```java
+c.item().table(table -> {
+    // 1. Define columns
+    table.columns(cols -> {
+        cols.relative(3);   // description takes 3/5 of available width
+        cols.relative(1);   // quantity
+        cols.fixed(80);     // price is always 80pt wide
+    });
+
+    // 2. Header row (optional)
+    table.header(h -> {
+        h.cell("Description").bold();
+        h.cell("Qty").bold().centerAlign();
+        h.cell("Price").bold().rightAlign();
+    });
+
+    // 3. Data rows
+    table.row(r -> {
+        r.cell("Backend development");
+        r.cell("8 h").centerAlign();
+        r.cell("960.00 EUR").rightAlign();
+    });
+    table.row(r -> {
+        r.cell("Code review");
+        r.cell("2 h").centerAlign();
+        r.cell("240.00 EUR").rightAlign();
+    });
+})
+.cellPadding(6)
+.alternateRowColor(Colors.GRAY_50)
+.borderColor(Colors.GRAY_300);
+```
+
+## Column definitions
+
+| Method             | What it does                                                                    |
+| ------------------ | ------------------------------------------------------------------------------- |
+| `.relative(float)` | Adds a proportional column; `relative(2)` gets twice the width of `relative(1)` |
+| `.relative()`      | Shorthand for `.relative(1)`                                                    |
+| `.fixed(float)`    | Adds a fixed-width column in points                                             |
+
+## Cell API
+
+The shorthand form creates a cell with text and lets you chain styling on it:
+
+```java
+h.cell("Label").bold().centerAlign();
+```
+
+For more complex styling, create a blank cell and configure it fluently:
+
+```java
+r.cell()
+    .text("1,200.00 EUR")
+    .rightAlign()
+    .bold()
+    .color(Colors.GREEN_800)
+    .background(Colors.GREEN_50)
+    .borderTop(1f, Colors.GRAY_200)
+    .padding(8f);
+```
+
+### Common cell methods
+
+| Method                        | What it does                             |
+| ----------------------------- | ---------------------------------------- |
+| `.text(String)`               | Sets the cell text                       |
+| `.content(Element)`           | Renders an element instead of plain text |
+| `.bold()`                     | Uses bold text                           |
+| `.fontSize(float)`            | Sets the font size                       |
+| `.color(KawaColor)`           | Sets the text color                      |
+| `.leftAlign()`                | Left-aligns the content                  |
+| `.centerAlign()`              | Centers the content horizontally         |
+| `.rightAlign()`               | Right-aligns the content                 |
+| `.background(KawaColor)`      | Sets the cell background color           |
+| `.padding(float)`             | Sets uniform padding on all sides        |
+| `.paddingH(float)`            | Sets left and right padding              |
+| `.paddingV(float)`            | Sets top and bottom padding              |
+| `.borderTop(float, Color)`    | Sets a top border                        |
+| `.borderBottom(float, Color)` | Sets a bottom border                     |
+| `.borderLeft(float, Color)`   | Sets a left border                       |
+| `.borderRight(float, Color)`  | Sets a right border                      |
+| `.style(StyleSheet)`          | Applies a full `StyleSheet` to the cell  |
+
+## Table-level methods
+
+| Method                          | What it does                                        |
+| ------------------------------- | --------------------------------------------------- |
+| `.cellPadding(float)`           | Sets default padding for all cells                  |
+| `.cellPaddingH(float)`          | Sets default horizontal padding                     |
+| `.cellPaddingV(float)`          | Sets default vertical padding                       |
+| `.borderColor(KawaColor)`       | Sets the grid line color                            |
+| `.borderWidth(float)`           | Sets the grid line width                            |
+| `.noBorders()`                  | Removes grid lines from the table                   |
+| `.alternateRowColor(KawaColor)` | Applies a background color to alternating data rows |
+| `.headerBackground(KawaColor)`  | Sets the header row background color                |
+
+## Applying a StyleSheet to cells
+
+When you have a consistent header or row style, define it once as a `StyleSheet` and apply it to each cell:
+
+```java
+StyleSheet headerStyle = StyleSheet.of(s -> s
+    .background(Colors.BLUE_50)
+    .paddingH(12f).paddingV(8f)
+    .borderBottom(1f, Colors.BLUE_200)
+    .textStyle(ts -> ts.bold().color(Colors.BLUE_900).fontSize(10f))
+);
+
+table.header(h -> {
+    h.cell().style(headerStyle).text("Product");
+    h.cell().style(headerStyle).text("Price").rightAlign();
+});
+```
+
+## Rich cell content
+
+Use `.content(element)` when a cell needs more than a line of text:
+
+```java
+table.row(r -> {
+    r.cell().content(new ColumnElement(col -> {
+        col.text("Premium Plan").bold().fontSize(10);
+        col.text("Everything in Standard, plus priority support").fontSize(8).color(Colors.GRAY_500);
+    }));
+    r.cell("99 EUR/mo").rightAlign().bold();
+});
+```

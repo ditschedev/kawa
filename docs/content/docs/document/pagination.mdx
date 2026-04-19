@@ -1,0 +1,52 @@
+---
+title: Pagination
+description: How Kawa handles content that spans multiple pages.
+---
+
+Kawa paginates content automatically. You define one page template and Kawa creates as many pages as needed to fit everything.
+
+## How it works
+
+Rendering happens in two passes:
+
+1. **Measure.** Every element reports how much vertical space it needs for the available width.
+2. **Render.** Elements are drawn top to bottom. When an element would not fit on the current page, Kawa opens a new one (with the header and footer applied) and continues there.
+
+Elements like `TableElement` and `ColumnElement` can also split across a page boundary, so a table that starts near the bottom of a page will continue naturally at the top of the next one.
+
+## Forcing a page break
+
+Add a `PageBreakElement` to start a new page at a specific point:
+
+```java
+content(c -> {
+    c.item().text("Chapter 1 content...");
+
+    c.add(new PageBreakElement());
+
+    c.item().text("Chapter 2 content...");
+});
+```
+
+## Receipt mode
+
+For receipts or labels on roll paper, call `fitContentToSinglePage()`. Instead of paginating, Kawa grows the page height to fit all the content.
+
+```java
+page.size(PageSize.custom(80, 200, Unit.MM))
+    .fitContentToSinglePage()
+    .marginTop(10).marginBottom(10).marginX(8)
+    .content(c -> {
+        c.item().text("ACME Shop").bold().centerAlign();
+        // ... receipt content
+    });
+```
+
+<Callout type="warn">
+  `fitContentToSinglePage()` turns off normal pagination. The header and footer still render, but
+  only once at the top and bottom of the single page.
+</Callout>
+
+## Headers and footers on every page
+
+Headers and footers you define on `PageDefinition` are drawn on every page. The `PageContext` always reflects the correct page number, so counters like "Page 2 / 5" just work.

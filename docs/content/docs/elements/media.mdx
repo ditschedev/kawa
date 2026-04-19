@@ -1,0 +1,106 @@
+---
+title: Media Elements
+description: Embed images, QR codes, and barcodes in your documents.
+---
+
+## ImageElement
+
+`ImageElement` embeds a raster image (PNG or JPG), an SVG, or the first page of another PDF rendered as an image.
+
+### Loading an image
+
+```java
+// From a classpath resource (inside your JAR)
+ImageElement.ofResource("/images/logo.png")
+
+// From a file path
+ImageElement.ofFile("/usr/local/share/images/logo.svg")
+
+// From a byte array
+ImageElement.ofBytes(imageBytes, "png")
+
+// Render the first page of another PDF as an image
+ImageElement.ofFile("/path/to/document.pdf")
+```
+
+### Sizing
+
+```java
+// Fixed width in points; height scales to maintain aspect ratio
+ImageElement.ofResource("/logo.svg").width(180)
+
+// Fixed width in a specific unit
+ImageElement.ofResource("/logo.svg").width(6, Unit.CM)
+
+// Both dimensions fixed
+ImageElement.ofResource("/logo.svg").fixed(180, 60)
+ImageElement.ofResource("/logo.svg").fixed(60, 20, Unit.MM)
+```
+
+### Centering an image
+
+Images are block elements that fill the available width. To center one, put it inside a `RowElement` with fill columns on each side:
+
+```java
+c.item().row(r -> {
+    r.fillColumn(new ColumnElement());
+    r.fixedColumn(120, ImageElement.ofResource("/logo.svg").width(120));
+    r.fillColumn(new ColumnElement());
+});
+```
+
+## QrCodeElement
+
+`QrCodeElement` generates a QR code from any string. The `.size()` value sets both the width and height.
+
+```java
+c.add(new QrCodeElement("https://example.com/product/42").size(100));
+c.add(new QrCodeElement("https://example.com").size(3, Unit.CM));
+```
+
+Some common content formats:
+
+```java
+// URL
+new QrCodeElement("https://example.com")
+
+// vCard
+new QrCodeElement("BEGIN:VCARD\nFN:Max Mustermann\nEMAIL:max@example.com\nEND:VCARD")
+
+// Wi-Fi credentials
+new QrCodeElement("WIFI:S:MyNetwork;T:WPA;P:MyPassword;;")
+```
+
+## BarcodeElement
+
+`BarcodeElement` generates a linear barcode. The default format is Code 128, which works with any alphanumeric string.
+
+```java
+c.add(new BarcodeElement("ORDER-2025-001234")
+    .width(160)
+    .height(45));
+
+// With explicit units
+c.add(new BarcodeElement("ORDER-2025-001234")
+    .width(60, Unit.MM)
+    .height(15, Unit.MM));
+```
+
+To use a different format, pass a ZXing `BarcodeFormat`:
+
+```java
+import com.google.zxing.BarcodeFormat;
+
+new BarcodeElement("123456789012")
+    .format(BarcodeFormat.EAN_13)
+    .width(120)
+    .height(40)
+```
+
+| Method                   | What it does                                            |
+| ------------------------ | ------------------------------------------------------- |
+| `.width(float)`          | Sets the barcode width in points                        |
+| `.width(float, Unit)`    | Sets the barcode width in the given unit                |
+| `.height(float)`         | Sets the barcode height in points                       |
+| `.height(float, Unit)`   | Sets the barcode height in the given unit               |
+| `.format(BarcodeFormat)` | Changes the ZXing barcode format; default is `CODE_128` |

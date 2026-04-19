@@ -1,0 +1,142 @@
+---
+title: Layout Elements
+description: Column, Row, Grid, Container, and Stack for arranging content on a page.
+---
+
+## ColumnElement
+
+`ColumnElement` stacks elements vertically. It is the default container you work with inside `content()`, `header()`, and `footer()` callbacks.
+
+```java
+ColumnElement col = new ColumnElement(c -> {
+    c.text("Title").bold().fontSize(14);
+    c.add(new SpacerElement(8));
+    c.text("Body text goes here.");
+});
+```
+
+Use `.spacing(float)` to add a uniform gap between all children instead of adding spacers manually:
+
+```java
+new ColumnElement(c -> {
+    c.text("Line 1");
+    c.text("Line 2");
+    c.text("Line 3");
+}).spacing(6);
+```
+
+Both accept an optional `Unit`:
+
+```java
+new SpacerElement(5, Unit.MM)
+col.spacing(3, Unit.MM)
+```
+
+## RowElement
+
+`RowElement` arranges children side by side. You define each column with one of these methods:
+
+| Method                           | What it does                                                              |
+| -------------------------------- | ------------------------------------------------------------------------- |
+| `.fixedColumn(float, ...)`       | Adds a column with an exact width in points                               |
+| `.fixedColumn(float, Unit, ...)` | Adds a column with an exact width in the given unit                       |
+| `.relativeColumn(float, ...)`    | Adds a proportional column; weight `2` gets twice the space of weight `1` |
+| `.fillColumn(...)`               | Shorthand for `.relativeColumn(1, ...)`                                   |
+| `.spacing(float)`                | Sets the gap between columns in points                                    |
+| `.spacing(float, Unit)`          | Sets the gap in the given unit                                            |
+
+```java
+c.item().row(row -> {
+    row.fixedColumn(28, Unit.MM, col -> col.text("Label:").semiBold());
+    row.fillColumn(               col -> col.text("Value"));
+    row.fixedColumn(16, Unit.MM,  col -> col.text("Unit").fontSize(9).color(Colors.GRAY_500));
+});
+```
+
+## GridElement
+
+`GridElement` is a two-dimensional grid. You define the column structure once and then add rows:
+
+```java
+c.add(new GridElement(grid -> {
+    grid.columns(cols -> {
+        cols.fixed(90);       // label column — points
+        cols.fixed(32, Unit.MM); // or with a unit
+        cols.relative(1);     // value column
+    });
+    grid.rowGap(6);
+
+    grid.row(r -> {
+        r.cell(col -> col.text("Name:").semiBold().fontSize(10));
+        r.cell(col -> col.text("Max Mustermann").fontSize(10));
+    });
+    grid.row(r -> {
+        r.cell(col -> col.text("Email:").semiBold().fontSize(10));
+        r.cell(col -> col.text("max@example.com").fontSize(10));
+    });
+}));
+```
+
+Control spacing with `grid.columnGap(float)` and `grid.rowGap(float)`.
+
+## ContainerElement
+
+`ContainerElement` wraps another element with a background color, padding, and borders. You can create one inline or from a reusable `StyleSheet`:
+
+```java
+// Inline
+ContainerElement.of(s -> s
+    .background(Colors.BLUE_50)
+    .padding(12f)
+    .border(1f, Colors.BLUE_200)
+).containing(
+    new TextElement("Info box").semiBold().color(Colors.BLUE_900)
+);
+
+// With units
+ContainerElement.of(s -> s
+    .background(Colors.GRAY_50)
+    .padding(4, Unit.MM)
+    .border(0.5f, Unit.MM, Colors.GRAY_200)
+).containing(myElement);
+
+// Reusable style
+StyleSheet cardStyle = StyleSheet.of(s -> s
+    .background(Colors.GRAY_50)
+    .paddingH(16f).paddingV(12f)
+    .border(0.5f, Colors.GRAY_200)
+);
+
+c.add(ContainerElement.of(cardStyle).containing(myElement));
+```
+
+See [StyleSheet](/docs/styling/stylesheet) for the full list of styling options.
+
+## StackElement
+
+`StackElement` renders multiple layers on top of each other, all aligned to the same top-left corner. The height of the stack equals the height of its tallest layer.
+
+A typical use case is placing a badge or label over a colored background block:
+
+```java
+c.add(new StackElement()
+    .layer(new SpacerElement(60))
+    .layer(new ColumnElement(col -> {
+        col.text("RECOMMENDED").bold().fontSize(8).color(Colors.WHITE).centerAlign();
+        col.text("9,900 EUR").bold().fontSize(20).centerAlign();
+    }))
+);
+```
+
+You can also use it for a draft watermark:
+
+```java
+c.add(new StackElement()
+    .layer(bodyContent)
+    .layer(new ColumnElement(col ->
+        col.text("DRAFT").fontSize(48).bold()
+           .color(Colors.GRAY_300.withAlpha(0.4f))
+           .centerAlign()
+    ))
+);
+```

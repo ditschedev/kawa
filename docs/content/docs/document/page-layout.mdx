@@ -1,0 +1,114 @@
+---
+title: Page Layout
+description: Set the page size, margins, headers, and footers using PageDefinition.
+---
+
+Every page is configured through `PageDefinition`. You get access to it inside the `doc.page()` callback or the `compose()` method of `KawaDocument`.
+
+## Page size
+
+Kawa has built-in presets for common paper sizes:
+
+```java
+page.size(PageSize.A3)
+page.size(PageSize.A4)
+page.size(PageSize.A5)
+page.size(PageSize.LETTER)
+page.size(PageSize.LEGAL)
+
+// Landscape orientation
+page.size(PageSize.A4.landscape())
+
+// Custom size — pass a Unit as the third argument
+page.size(PageSize.custom(80, 200, Unit.MM))   // 80 × 200 mm roll
+page.size(PageSize.custom(595.28f, 841.89f))    // A4 in points
+```
+
+<Callout>
+  All bare `float` values are in **points** (1 pt = 1/72 inch). Pass a `Unit` as the second argument
+  to any method to use a different unit. See [Units](/docs/units).
+</Callout>
+
+## Margins
+
+You can set all margins at once or control each side individually:
+
+```java
+page.margin(50)            // all sides, in points
+
+page.marginX(40)           // left and right
+page.marginY(36)           // top and bottom
+
+page.marginTop(20)
+page.marginRight(30)
+page.marginBottom(20)
+page.marginLeft(30)
+
+// Using explicit units
+page.margin(2, Unit.CM)
+page.marginX(15, Unit.MM)
+page.marginTop(10, Unit.MM)
+page.marginBottom(0.5f, Unit.IN)
+```
+
+## Header
+
+The header appears at the top of every page, above the content area. You get a `ColumnElement` to populate:
+
+```java
+page.header(h -> {
+    h.text("ACME GmbH — Invoice #2025-001").semiBold().fontSize(12);
+});
+```
+
+If you need the current page number inside the header, use the two-argument form:
+
+```java
+page.header((h, ctx) -> {
+    h.add(new RowElement(row -> {
+        row.fillColumn(left -> left.text("My Report").semiBold());
+        row.fixedColumn(80, right -> right.text(ctx.pageOf()).rightAlign().fontSize(9));
+    }));
+});
+```
+
+`PageContext` gives you:
+
+| Method          | What it returns                           |
+| --------------- | ----------------------------------------- |
+| `.page()`       | The current page number, 1-based          |
+| `.totalPages()` | The total number of pages in the document |
+| `.pageOf()`     | A formatted string such as `"1 / 3"`      |
+
+## Footer
+
+The footer works exactly the same way as the header:
+
+```java
+page.footer((f, ctx) -> {
+    f.text("Page " + ctx.pageOf())
+     .centerAlign()
+     .fontSize(9)
+     .color(Colors.GRAY_500);
+});
+```
+
+## Putting it together
+
+```java
+page.size(PageSize.A4)
+    .margin(2, Unit.CM)
+    .header((h, ctx) -> {
+        h.add(new RowElement(row -> {
+            row.fillColumn(left -> left.text("ACME GmbH").semiBold().fontSize(14));
+            row.fixedColumn(100, right -> right.text(ctx.pageOf()).rightAlign().fontSize(9));
+        }));
+    })
+    .footer(f -> {
+        f.text("ACME GmbH · Musterstrasse 1 · 12345 Berlin")
+         .fontSize(8).centerAlign().color(Colors.GRAY_500);
+    })
+    .content(c -> {
+        // your content here
+    });
+```
