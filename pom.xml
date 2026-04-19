@@ -6,7 +6,7 @@
 
     <groupId>dev.ditsche</groupId>
     <artifactId>kawa</artifactId>
-    <version>0.1.1</version>
+    <version>0.1.2</version>
     <packaging>jar</packaging>
 
     <name>kawa</name>
@@ -38,7 +38,7 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <pdfbox.version>3.0.7</pdfbox.version>
-        <junit.version>5.10.2</junit.version>
+        <junit.version>6.0.3</junit.version>
     </properties>
 
     <dependencies>
@@ -80,13 +80,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.2.5</version>
+                <version>3.5.5</version>
             </plugin>
 
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
-                <version>2.44.3</version>
+                <version>3.4.0</version>
                 <configuration>
                     <java>
                         <googleJavaFormat>
@@ -110,7 +110,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.4.0</version>
                 <executions>
                     <execution>
                         <goals><goal>jar</goal></goals>
@@ -121,7 +121,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.6.3</version>
+                <version>3.12.0</version>
                 <executions>
                     <execution>
                         <goals><goal>jar</goal></goals>
@@ -132,7 +132,7 @@
             <plugin>
                 <groupId>org.jreleaser</groupId>
                 <artifactId>jreleaser-maven-plugin</artifactId>
-                <version>1.15.0</version>
+                <version>1.23.0</version>
                 <configuration>
                     <jreleaser>
                         <signing>
@@ -178,7 +178,7 @@
               <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-                <version>3.2.2</version>
+                <version>3.2.8</version>
                 <executions>
                   <execution>
                     <goals><goal>sign</goal></goals>

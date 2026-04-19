@@ -2,7 +2,7 @@
 
 **Readable PDF composition for Java.**
 
-Kawa is an open source Java library for building structured PDF documents with a fluent API.  
+Kawa is an open source Java library for building structured PDF documents with a fluent API.
 Compose reports, invoices, and generated documents with text, tables, images, layout primitives, styling, and PDF manipulation without dropping into low-level PDF code.
 
 [Read the documentation](https://kawa.ditsche.dev) • [Getting Started](https://kawa.ditsche.dev/docs/getting-started) • [GitHub Releases](https://github.com/ditschedev/kawa/releases)
@@ -24,7 +24,7 @@ Compose reports, invoices, and generated documents with text, tables, images, la
 <dependency>
   <groupId>dev.ditsche</groupId>
   <artifactId>kawa</artifactId>
-  <version>0.1.0</version>
+  <version>0.1.1</version>
 </dependency>
 ```
 
@@ -33,21 +33,45 @@ Requires Java 17+.
 ## Quick Example
 
 ```java
-import io.kawa.core.Document;
-import io.kawa.core.PageSize;
 
-Document.create(doc -> {
-    doc.title("Hello Kawa");
+import core.dev.ditsche.kawa.PageSize;
 
-    doc.page(page -> page
-        .size(PageSize.A4)
-        .margin(50)
-        .content(c -> {
-            c.item().text("Hello, Kawa!").bold().fontSize(24);
-            c.item().text("This PDF was generated in Java.");
+Document.create(doc ->{
+  doc.
+
+title("Hello Kawa");
+
+    doc.
+
+page(page ->page
+  .
+
+size(PageSize.A4)
+        .
+
+margin(50)
+        .
+
+content(c ->{
+  c.
+
+item().
+
+text("Hello, Kawa!").
+
+bold().
+
+fontSize(24);
+            c.
+
+item().
+
+text("This PDF was generated in Java.");
         })
-    );
-}).generatePdf("hello.pdf");
+          );
+          }).
+
+generatePdf("hello.pdf");
 ```
 
 ## Development
@@ -60,4 +84,4 @@ Contributions are welcome.
 
 If you want to contribute, opening an issue or pull request with a small focused change is the easiest way to get started.
 
-Built on top of [Apache PDFBox](https://pdfbox.apache.org/).
+Built on top of [Apache PDFBox](https://pdfbox.apache.org/) which is licensed under Apache License 2.0.
