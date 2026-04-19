@@ -43,6 +43,8 @@ class InputElementTest {
                                 c -> {
                                   c.add(new InputElement("name").label("Name"));
                                   c.add(new SpacerElement(10));
+                                  c.add(new InputElement("email").label("E-Mail").value("joe@example.com"));
+                                  c.add(new SpacerElement(10));
                                   c.add(new InputElement("notes").label("Notes").multiline(60));
                                 })))
         .generatePdf(out);

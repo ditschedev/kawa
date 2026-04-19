@@ -1,6 +1,6 @@
 ---
 title: Form Elements
-description: Fillable input fields and clickable hyperlinks.
+description: Fillable input fields, checkboxes, radio buttons, dropdowns, and clickable controls.
 ---
 
 ## HyperlinkElement
@@ -74,3 +74,201 @@ new InputElement("phone").label("Phone").value("+49 ")
 | `.underline()`                | Renders the field as an underline instead of a box              |
 | `.borderColor(KawaColor)`     | Sets the border color                                           |
 | `.backgroundColor(KawaColor)` | Sets the background fill color                                  |
+
+## ButtonElement
+
+`ButtonElement` renders a clickable push button. The visual is drawn by kawa; the AcroForm widget makes it interactive in supporting PDF viewers.
+
+```java
+c.add(new ButtonElement("submit", "Submit Form"));
+```
+
+The first argument is the unique field name and the second is the visible button label.
+
+### Styling
+
+```java
+// Custom colors
+new ButtonElement("cancel", "Cancel")
+    .backgroundColor(Colors.RED_600)
+    .borderColor(Colors.RED_700)
+    .textColor(KawaColor.WHITE)
+
+// Custom height and font size
+new ButtonElement("save", "Save Draft")
+    .height(30)
+    .fontSize(12)
+```
+
+### Common methods
+
+| Method                        | What it does                               |
+| ----------------------------- | ------------------------------------------ |
+| `.height(float)`              | Sets the button height (default: 24 pt)    |
+| `.fontSize(float)`            | Sets the label font size (default: 11)     |
+| `.backgroundColor(KawaColor)` | Sets the button fill color                 |
+| `.textColor(KawaColor)`       | Sets the label text color                  |
+| `.borderColor(KawaColor)`     | Sets the border color                      |
+| `.borderWidth(float)`         | Sets the border thickness (default: 1 pt)  |
+
+## CheckboxElement
+
+`CheckboxElement` renders a single boolean checkbox with an optional label to its right.
+
+```java
+c.add(new CheckboxElement("agree")
+    .label("I agree to the terms and conditions")
+);
+```
+
+### Pre-checking
+
+```java
+c.add(new CheckboxElement("newsletter")
+    .label("Subscribe to newsletter")
+    .checked()
+);
+```
+
+### Styling
+
+```java
+// Custom size and colors
+new CheckboxElement("accept")
+    .label("Accept")
+    .size(16)
+    .borderColor(Colors.GRAY_400)
+    .checkColor(Colors.GREEN_600)
+    .backgroundColor(Colors.GREEN_50)
+```
+
+### Common methods
+
+| Method                        | What it does                                    |
+| ----------------------------- | ----------------------------------------------- |
+| `.label(String)`              | Sets the label text to the right of the box     |
+| `.checked()`                  | Pre-checks the box                              |
+| `.checked(boolean)`           | Sets the checked state explicitly               |
+| `.size(float)`                | Size of the checkbox square in points (default: 14) |
+| `.labelFontSize(float)`       | Sets the label font size                        |
+| `.labelColor(KawaColor)`      | Sets the label text color                       |
+| `.borderColor(KawaColor)`     | Sets the checkbox border color                  |
+| `.backgroundColor(KawaColor)` | Sets the checkbox background fill              |
+| `.checkColor(KawaColor)`      | Sets the color of the check mark                |
+
+## RadioButtonElement
+
+`RadioButtonElement` renders a group of mutually exclusive options. Pass all options as a list; each string is used as both the display label and the export value.
+
+```java
+c.add(new RadioButtonElement("size", List.of("Small", "Medium", "Large"))
+    .selected("Medium")
+);
+```
+
+### Horizontal layout
+
+```java
+c.add(new RadioButtonElement("color", List.of("Red", "Green", "Blue"))
+    .horizontal()
+    .selected("Blue")
+);
+```
+
+### Styling
+
+```java
+new RadioButtonElement("priority", List.of("Low", "Normal", "High"))
+    .size(14)
+    .selectedColor(Colors.BLUE_600)
+    .labelFontSize(12)
+    .labelColor(Colors.GRAY_700)
+```
+
+### Common methods
+
+| Method                        | What it does                                            |
+| ----------------------------- | ------------------------------------------------------- |
+| `.selected(String)`           | Pre-selects the option matching this label              |
+| `.horizontal()`               | Lays all options out on one row                         |
+| `.vertical()`                 | Stacks options vertically (default)                     |
+| `.size(float)`                | Diameter of each radio circle in points (default: 12)  |
+| `.labelFontSize(float)`       | Sets the option label font size                         |
+| `.labelColor(KawaColor)`      | Sets the option label color                             |
+| `.borderColor(KawaColor)`     | Sets the circle border color                            |
+| `.backgroundColor(KawaColor)` | Sets the circle background fill                        |
+| `.selectedColor(KawaColor)`   | Sets the inner dot color for the selected option        |
+
+## ChoiceElement
+
+`ChoiceElement` renders a scrollable list box. All options are visible at once (up to the configured height); users can scroll and click to select one.
+
+```java
+c.add(new ChoiceElement("fruit", List.of("Apple", "Banana", "Cherry", "Date"))
+    .label("Select a fruit")
+    .height(100)
+    .selected("Banana")
+);
+```
+
+### Styling
+
+```java
+new ChoiceElement("country", List.of("Germany", "France", "Spain"))
+    .height(80)
+    .borderColor(Colors.BLUE_300)
+    .backgroundColor(Colors.BLUE_50)
+    .selectionColor(Colors.BLUE_500)
+    .textColor(Colors.GRAY_800)
+```
+
+### Common methods
+
+| Method                        | What it does                                            |
+| ----------------------------- | ------------------------------------------------------- |
+| `.label(String)`              | Sets the label text above the list box                  |
+| `.labelFontSize(float)`       | Sets the label font size                                |
+| `.height(float)`              | Sets the list box height in points (default: 80)        |
+| `.selected(String)`           | Pre-selects the option matching this label              |
+| `.fontSize(float)`            | Sets the option item font size                          |
+| `.borderColor(KawaColor)`     | Sets the border color                                   |
+| `.backgroundColor(KawaColor)` | Sets the list box background fill                      |
+| `.textColor(KawaColor)`       | Sets the item text color                                |
+| `.selectionColor(KawaColor)`  | Sets the highlight color for the selected row           |
+| `.borderWidth(float)`         | Sets the border thickness                               |
+
+## ComboboxElement
+
+`ComboboxElement` renders a single-line dropdown. Only the selected item is shown until the user clicks to open the list.
+
+```java
+c.add(new ComboboxElement("status", List.of("Draft", "Review", "Approved", "Rejected"))
+    .label("Document Status")
+    .selected("Review")
+);
+```
+
+### Styling
+
+```java
+new ComboboxElement("lang", List.of("English", "German", "French", "Spanish"))
+    .label("Language")
+    .borderColor(Colors.GRAY_300)
+    .backgroundColor(Colors.GRAY_50)
+    .textColor(Colors.GRAY_800)
+    .height(24)
+```
+
+### Common methods
+
+| Method                        | What it does                                               |
+| ----------------------------- | ---------------------------------------------------------- |
+| `.label(String)`              | Sets the label text above the combo box                    |
+| `.labelFontSize(float)`       | Sets the label font size                                   |
+| `.height(float)`              | Sets the combo box height in points (default: 22)          |
+| `.selected(String)`           | Pre-selects the option matching this label                 |
+| `.fontSize(float)`            | Sets the displayed text font size                          |
+| `.borderColor(KawaColor)`     | Sets the border color                                      |
+| `.backgroundColor(KawaColor)` | Sets the field background fill                            |
+| `.textColor(KawaColor)`       | Sets the displayed text color                              |
+| `.borderWidth(float)`         | Sets the border thickness                                  |

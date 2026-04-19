@@ -12,4 +12,9 @@ public sealed interface ContentElement extends Element
         QrCodeElement,
         BarcodeElement,
         InputElement,
+        ButtonElement,
+        CheckboxElement,
+        RadioButtonElement,
+        ChoiceElement,
+        ComboboxElement,
         CustomElement {}
