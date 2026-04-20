@@ -9,6 +9,7 @@ import dev.ditsche.kawa.renderer.RenderContext;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
@@ -159,7 +160,7 @@ class Paginator {
     return slot.measure(ctx);
   }
 
-  /** Renders a single physical page: header, content slice, footer. */
+  /** Renders a single physical page: background, header, content slice, footer, overlay. */
   private void renderPhysicalPage(
       PDDocument pdDocument,
       float contentOffsetY,
@@ -175,6 +176,8 @@ class Paginator {
     pdDocument.addPage(pdPage);
 
     try (RenderContext renderCtx = new RenderContext(pdDocument, pdPage, fontRegistry)) {
+      renderFullPageSlot(def.getBackgroundBuilder(), ctx, renderCtx, size.width, pageHeight);
+
       float ml = def.getMarginLeft();
       float mt = def.getMarginTop();
       float cw = def.contentWidth();
@@ -208,6 +211,22 @@ class Paginator {
         LayoutContext fCtx = new LayoutContext(ml, footerY, cw, footerHeight);
         footerEl.render(fCtx, renderCtx);
       }
+
+      renderFullPageSlot(def.getOverlayBuilder(), ctx, renderCtx, size.width, pageHeight);
     }
+  }
+
+  private void renderFullPageSlot(
+      BiConsumer<ColumnElement, PageContext> builder,
+      PageContext pageCtx,
+      RenderContext renderCtx,
+      float pageWidth,
+      float pageHeight) {
+    if (builder == null) {
+      return;
+    }
+    ColumnElement slot = new ColumnElement();
+    builder.accept(slot, pageCtx);
+    slot.render(new LayoutContext(0, 0, pageWidth, pageHeight), renderCtx);
   }
 }

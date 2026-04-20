@@ -1,6 +1,6 @@
 ---
 title: Page Layout
-description: Set the page size, margins, headers, and footers using PageDefinition.
+description: Set the page size, margins, backgrounds, overlays, headers, and footers using PageDefinition.
 ---
 
 Every page is configured through `PageDefinition`. You get access to it inside the `doc.page()` callback or the `compose()` method of `KawaDocument`.
@@ -60,6 +60,26 @@ page.header(h -> {
     h.text("ACME GmbH — Invoice #2025-001").semiBold().fontSize(12);
 });
 ```
+
+## Background and overlay
+
+Backgrounds and overlays are full-page slots. They are rendered outside the margin-constrained
+content area: `background` goes behind the page content, and `overlay` goes above the page content.
+
+```java
+page.background(bg -> {
+    bg.add(ImageElement.ofResource("/certificate-bg.png").fill());
+});
+
+page.overlay((overlay, ctx) -> {
+    overlay.text("DRAFT " + ctx.pageOf())
+           .fontSize(48)
+           .color(Colors.GRAY_300)
+           .centerAlign();
+});
+```
+
+Both slots also support the two-argument form with `PageContext`, just like headers and footers.
 
 If you need the current page number inside the header, use the two-argument form:
 

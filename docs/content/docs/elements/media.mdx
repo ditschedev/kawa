@@ -35,6 +35,9 @@ ImageElement.ofResource("/logo.svg").width(6, Unit.CM)
 // Both dimensions fixed
 ImageElement.ofResource("/logo.svg").fixed(180, 60)
 ImageElement.ofResource("/logo.svg").fixed(60, 20, Unit.MM)
+
+// Cover the available layout box while maintaining aspect ratio
+ImageElement.ofResource("/background.png").fill()
 ```
 
 ### Centering an image

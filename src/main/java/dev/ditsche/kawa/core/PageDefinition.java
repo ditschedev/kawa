@@ -9,8 +9,9 @@ import java.util.function.Consumer;
 /**
  * Defines the structure of pages in a document.
  *
- * <p>A page definition acts as a template for page size, margins, header, footer, and content. The
- * paginator uses this template to produce the required number of physical PDF pages.
+ * <p>A page definition acts as a template for page size, margins, background, header, footer,
+ * overlay, and content. The paginator uses this template to produce the required number of physical
+ * PDF pages.
  */
 public class PageDefinition {
 
@@ -23,8 +24,10 @@ public class PageDefinition {
   private boolean fitContentToSinglePage = false;
 
   // --- Slots ---
+  private BiConsumer<ColumnElement, PageContext> backgroundBuilder;
   private BiConsumer<ColumnElement, PageContext> headerBuilder;
   private BiConsumer<ColumnElement, PageContext> footerBuilder;
+  private BiConsumer<ColumnElement, PageContext> overlayBuilder;
   private Element content;
 
   // -------------------------------------------------------------------------
@@ -112,6 +115,22 @@ public class PageDefinition {
   }
 
   // -------------------------------------------------------------------------
+  // Background
+  // -------------------------------------------------------------------------
+
+  /** Static background — rendered behind all page content and independent of margins. */
+  public PageDefinition background(Consumer<ColumnElement> builder) {
+    this.backgroundBuilder = (col, ctx) -> builder.accept(col);
+    return this;
+  }
+
+  /** Dynamic background — receives the current {@link PageContext}. */
+  public PageDefinition background(BiConsumer<ColumnElement, PageContext> builder) {
+    this.backgroundBuilder = builder;
+    return this;
+  }
+
+  // -------------------------------------------------------------------------
   // Header
   // -------------------------------------------------------------------------
 
@@ -140,6 +159,22 @@ public class PageDefinition {
   /** Dynamic footer — receives the current {@link PageContext}. */
   public PageDefinition footer(BiConsumer<ColumnElement, PageContext> builder) {
     this.footerBuilder = builder;
+    return this;
+  }
+
+  // -------------------------------------------------------------------------
+  // Overlay
+  // -------------------------------------------------------------------------
+
+  /** Static overlay — rendered above all page content and independent of margins. */
+  public PageDefinition overlay(Consumer<ColumnElement> builder) {
+    this.overlayBuilder = (col, ctx) -> builder.accept(col);
+    return this;
+  }
+
+  /** Dynamic overlay — receives the current {@link PageContext}. */
+  public PageDefinition overlay(BiConsumer<ColumnElement, PageContext> builder) {
+    this.overlayBuilder = builder;
     return this;
   }
 
@@ -189,12 +224,20 @@ public class PageDefinition {
     return content;
   }
 
+  BiConsumer<ColumnElement, PageContext> getBackgroundBuilder() {
+    return backgroundBuilder;
+  }
+
   BiConsumer<ColumnElement, PageContext> getHeaderBuilder() {
     return headerBuilder;
   }
 
   BiConsumer<ColumnElement, PageContext> getFooterBuilder() {
     return footerBuilder;
+  }
+
+  BiConsumer<ColumnElement, PageContext> getOverlayBuilder() {
+    return overlayBuilder;
   }
 
   boolean isFitContentToSinglePage() {

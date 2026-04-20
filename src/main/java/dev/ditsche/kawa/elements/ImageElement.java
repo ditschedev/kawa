@@ -75,6 +75,12 @@ public final class ImageElement implements ContentElement {
     return this;
   }
 
+  /** Scales proportionally to cover the whole available box, centered and clipped if needed. */
+  public ImageElement fill() {
+    sizeMode = SizeMode.FILL;
+    return this;
+  }
+
   /** Exact fixed size in points. */
   public ImageElement fixed(float width, float height) {
     sizeMode = SizeMode.FIXED;
@@ -105,6 +111,7 @@ public final class ImageElement implements ContentElement {
     return switch (sizeMode) {
       case FIXED -> fixedH;
       case FIXED_WIDTH -> fixedW;
+      case FILL -> Float.isFinite(context.height()) ? context.height() : context.width() * 0.5f;
       case FIT -> context.width() * 0.5f;
     };
   }
@@ -126,6 +133,11 @@ public final class ImageElement implements ContentElement {
           drawW = fixedW;
           drawH = imgH / imgW * drawW;
         }
+        case FILL -> {
+          float scale = Math.max(context.width() / imgW, context.height() / imgH);
+          drawW = imgW * scale;
+          drawH = imgH * scale;
+        }
         default -> {
           drawW = context.width();
           drawH = imgH / imgW * drawW;
@@ -133,8 +145,22 @@ public final class ImageElement implements ContentElement {
       }
 
       float pageH = renderCtx.getPage().getMediaBox().getHeight();
-      float pdfY = pageH - context.y() - drawH;
-      renderCtx.getContentStream().drawImage(image, context.x(), pdfY, drawW, drawH);
+      float drawX = context.x();
+      float drawY = pageH - context.y() - drawH;
+      if (sizeMode == SizeMode.FILL) {
+        drawX = context.x() + (context.width() - drawW) / 2f;
+        drawY = pageH - context.y() - context.height() + (context.height() - drawH) / 2f;
+        renderCtx.getContentStream().saveGraphicsState();
+        renderCtx
+            .getContentStream()
+            .addRect(
+                context.x(), pageH - context.y() - context.height(), context.width(), context.height());
+        renderCtx.getContentStream().clip();
+        renderCtx.getContentStream().drawImage(image, drawX, drawY, drawW, drawH);
+        renderCtx.getContentStream().restoreGraphicsState();
+      } else {
+        renderCtx.getContentStream().drawImage(image, drawX, drawY, drawW, drawH);
+      }
     } catch (IOException e) {
       throw new KawaRenderException("Failed to render image: " + imageSourceLabel(), e);
     }
@@ -199,6 +225,7 @@ public final class ImageElement implements ContentElement {
 
   private enum SizeMode {
     FIT,
+    FILL,
     FIXED,
     FIXED_WIDTH
   }
