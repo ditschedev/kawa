@@ -17,7 +17,7 @@ import javax.imageio.ImageIO;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 /** Renders a one-dimensional barcode from a string value using ZXing. */
-public non-sealed class BarcodeElement implements ContentElement {
+public final class BarcodeElement implements ContentElement {
 
   private final String content;
   private BarcodeFormat format = BarcodeFormat.CODE_128;
