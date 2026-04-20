@@ -17,4 +17,5 @@ public sealed interface ContentElement extends Element
         RadioButtonElement,
         ChoiceElement,
         ComboboxElement,
-        CustomElement {}
+        CustomElement,
+        BarChartElement {}

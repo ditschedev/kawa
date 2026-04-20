@@ -275,5 +275,11 @@ public non-sealed class ColumnElement implements LayoutElement {
       parent.add(el);
       return el;
     }
+
+    public BarChartElement barChart(Consumer<BarChartElement> builder) {
+      BarChartElement el = new BarChartElement(builder);
+      parent.add(el);
+      return el;
+    }
   }
 }
