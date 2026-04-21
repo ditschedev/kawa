@@ -3,8 +3,10 @@ package dev.ditsche.kawa.style;
 import java.awt.*;
 
 /**
- * Immutable color value with factory methods for hex, HSL, and OKLCh input. Use {@link
- * #toAwtColor()} to convert to {@link Color} for PDFBox rendering.
+ * Immutable color value with factory methods for hex, HSL, and OKLCh input. Internally uses RGBA to
+ * represent colors and provides methods for conversion to AWT {@link Color} for PDFBox rendering.
+ *
+ * @author Tobias Dittmann
  */
 public final class KawaColor {
 

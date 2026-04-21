@@ -4,7 +4,11 @@ import dev.ditsche.kawa.layout.LayoutContext;
 import dev.ditsche.kawa.renderer.RenderContext;
 import dev.ditsche.kawa.units.Unit;
 
-/** Adds a fixed amount of vertical space. */
+/**
+ * Adds a fixed amount of vertical space.
+ *
+ * @author Tobias Dittmann
+ */
 public final class SpacerElement implements ContentElement {
 
   private final float height;

@@ -18,6 +18,8 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
  * Internal pagination engine.
  *
  * <p>The paginator measures content, determines page breaks, and renders each page.
+ *
+ * @author Tobias Dittmann
  */
 class Paginator {
   private static final float HEADER_FOOTER_GAP = 8f;

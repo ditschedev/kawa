@@ -21,6 +21,8 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDField;
  * Renders an interactive PDF checkbox field with an optional text label.
  *
  * <p>Each field name should be unique within the document.
+ *
+ * @author Tobias Dittmann
  */
 public final class CheckboxElement implements ContentElement {
 

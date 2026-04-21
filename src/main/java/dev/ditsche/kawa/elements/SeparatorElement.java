@@ -6,7 +6,11 @@ import dev.ditsche.kawa.style.KawaColor;
 import dev.ditsche.kawa.units.Unit;
 import java.io.IOException;
 
-/** Draws a horizontal line across the available content width. */
+/**
+ * Draws a horizontal line across the available content width.
+ *
+ * @author Tobias Dittmann
+ */
 public final class SeparatorElement implements ContentElement {
 
   private float lineWidth = 0.5f;

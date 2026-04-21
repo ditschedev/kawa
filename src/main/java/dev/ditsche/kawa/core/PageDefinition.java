@@ -12,6 +12,8 @@ import java.util.function.Consumer;
  * <p>A page definition acts as a template for page size, margins, background, header, footer,
  * overlay, and content. The paginator uses this template to produce the required number of physical
  * PDF pages.
+ *
+ * @author Tobias Dittmann
  */
 public class PageDefinition {
 

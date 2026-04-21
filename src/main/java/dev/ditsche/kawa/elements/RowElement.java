@@ -7,7 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-/** Arranges child elements horizontally in fixed or relative columns. */
+/**
+ * Arranges child elements horizontally in fixed or relative columns.
+ *
+ * @author Tobias Dittmann
+ */
 public non-sealed class RowElement implements LayoutElement {
 
   // -------------------------------------------------------------------------

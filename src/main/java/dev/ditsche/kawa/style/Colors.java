@@ -4,6 +4,7 @@ package dev.ditsche.kawa.style;
  * Named color constants following the Tailwind palette convention.
  *
  * @see <a href="https://tailwindcss.com/docs/colors">Tailwind Colors</a>
+ *
  * @author Tobias Dittmann
  */
 public final class Colors {

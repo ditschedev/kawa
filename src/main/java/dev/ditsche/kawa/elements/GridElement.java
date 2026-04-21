@@ -6,7 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-/** Arranges elements in rows and columns with configurable column widths. */
+/**
+ * Arranges elements in rows and columns with configurable column widths.
+ *
+ * @author Tobias Dittmann
+ */
 public non-sealed class GridElement implements LayoutElement {
 
   // -------------------------------------------------------------------------

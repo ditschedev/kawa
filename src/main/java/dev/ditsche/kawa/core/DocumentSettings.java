@@ -1,6 +1,10 @@
 package dev.ditsche.kawa.core;
 
-/** Mutable document-level settings used during rendering. */
+/**
+ * Mutable document-level settings used during rendering.
+ *
+ * @author Tobias Dittmann
+ */
 public class DocumentSettings {
 
   private String title = "";

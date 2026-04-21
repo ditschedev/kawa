@@ -2,7 +2,11 @@ package dev.ditsche.kawa.pdf;
 
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 
-/** Fluent builder around PDFBox access permissions. */
+/**
+ * Fluent builder around PDFBox access permissions.
+ *
+ * @author Tobias Dittmann
+ */
 public final class PdfPermissions {
 
   private final AccessPermission accessPermission;

@@ -14,6 +14,8 @@ import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 /**
  * Wraps the PDFBox content stream and provides helper drawing methods. Passed down to elements
  * during the render phase.
+ *
+ * @author Tobias Dittmann
  */
 public class RenderContext implements AutoCloseable {
 

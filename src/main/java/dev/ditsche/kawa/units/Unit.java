@@ -10,6 +10,8 @@ package dev.ditsche.kawa.units;
  * .padding(1, Unit.CM)
  * .margin(0.5f, Unit.IN)
  * }</pre>
+ *
+ * @author Tobias Dittmann
  */
 public enum Unit {
   /** PDF points — the native unit. 1 pt = 1/72 in. */

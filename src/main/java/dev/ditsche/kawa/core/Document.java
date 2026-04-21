@@ -9,6 +9,8 @@ import java.util.function.Consumer;
  * Fluent entry point for building documents inline.
  *
  * <p>This type is intended for direct document composition without a dedicated report class.
+ *
+ * @author Tobias Dittmann
  */
 public final class Document {
 

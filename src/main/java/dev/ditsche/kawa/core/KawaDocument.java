@@ -9,6 +9,8 @@ import java.io.OutputStream;
  *
  * <p>Implementations define layout in {@link #compose(PageDefinition)} and may customize document
  * settings and post-generation behavior.
+ *
+ * @author Tobias Dittmann
  */
 public interface KawaDocument {
 

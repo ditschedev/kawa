@@ -10,7 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 
-/** Renders wrapped text with configurable alignment and styling. */
+/**
+ * Renders wrapped text with configurable alignment and styling.
+ *
+ * @author Tobias Dittmann
+ */
 public final class TextElement implements ContentElement {
 
   private final String text;

@@ -16,7 +16,11 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
-/** Renders a one-dimensional barcode from a string value using ZXing. */
+/**
+ * Renders a one-dimensional barcode from a string value using ZXing.
+ *
+ * @author Tobias Dittmann
+ */
 public final class BarcodeElement implements ContentElement {
 
   private final String content;

@@ -4,7 +4,11 @@ import dev.ditsche.kawa.elements.TextElement;
 import dev.ditsche.kawa.font.FontWeight;
 import java.util.function.Consumer;
 
-/** Collects reusable text formatting options. */
+/**
+ * Collects reusable text formatting options.
+ *
+ * @author Tobias Dittmann
+ */
 public class TextStyle {
 
   private Float fontSize;

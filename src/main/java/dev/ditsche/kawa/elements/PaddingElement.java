@@ -4,7 +4,11 @@ import dev.ditsche.kawa.layout.LayoutContext;
 import dev.ditsche.kawa.renderer.RenderContext;
 import dev.ditsche.kawa.units.Unit;
 
-/** Wraps another element with configurable padding on each side. */
+/**
+ * Wraps another element with configurable padding on each side.
+ *
+ * @author Tobias Dittmann
+ */
 public non-sealed class PaddingElement implements LayoutElement {
 
   private final Element child;

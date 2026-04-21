@@ -23,6 +23,8 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDField;
  *
  * <p>Users pick one item from a drop-down list. Each field name should be unique within the
  * document.
+ *
+ * @author Tobias Dittmann
  */
 public final class ComboboxElement implements ContentElement {
 

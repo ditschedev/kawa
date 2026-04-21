@@ -4,6 +4,8 @@ package dev.ditsche.kawa.core;
  * Runtime information about the current physical page.
  *
  * <p>Instances are provided to dynamic header and footer builders.
+ *
+ * @author Tobias Dittmann
  */
 public record PageContext(int pageNumber, int totalPages) {
 

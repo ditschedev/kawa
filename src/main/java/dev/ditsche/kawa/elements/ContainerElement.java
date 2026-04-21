@@ -7,7 +7,11 @@ import dev.ditsche.kawa.style.StyleSheet;
 import java.io.IOException;
 import java.util.function.Consumer;
 
-/** Wraps an element with background, padding, and border styling. */
+/**
+ * Wraps an element with background, padding, and border styling.
+ *
+ * @author Tobias Dittmann
+ */
 public non-sealed class ContainerElement implements LayoutElement {
 
   private final StyleSheet style;

@@ -16,9 +16,10 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.pdmodel.interactive.form.PDTextField;
 
 /**
- * Renders an interactive PDF text input field.
+ * Renders an interactive AcroForm PDF text input field.
  *
- * <p>Each field name should be unique within the document.
+ *
+ * @author Tobias Dittmann
  */
 public final class InputElement implements ContentElement {
 

@@ -7,6 +7,8 @@ import dev.ditsche.kawa.renderer.RenderContext;
  * Base abstraction for all composable PDF elements.
  *
  * <p>Elements participate in a measurement phase and a render phase.
+ *
+ * @author Tobias Dittmann
  */
 public sealed interface Element permits LayoutElement, ContentElement {
 

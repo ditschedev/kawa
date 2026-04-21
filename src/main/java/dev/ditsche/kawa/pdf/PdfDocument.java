@@ -24,6 +24,8 @@ import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
  *     .encrypt("owner", "user", PdfPermissions.fullAccess())
  *     .saveBytes();
  * }</pre>
+ *
+ * @author Tobias Dittmann
  */
 public final class PdfDocument implements Closeable {
 

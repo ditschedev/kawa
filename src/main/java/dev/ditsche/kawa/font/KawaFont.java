@@ -10,9 +10,7 @@ import java.util.TreeMap;
  * and italic axes. At least one upright source is required; all other weights are resolved to the
  * nearest registered one.
  *
- * <p>Named builder methods ({@link Builder#regular}, {@link Builder#semiBold}, {@link
- * Builder#bold}, …) are shortcuts for the corresponding weight constant from {@link FontWeight}.
- * The generic {@link Builder#weight(int, FontSource)} accepts any value in [1, 1000].
+ * @author Tobias Dittmann
  */
 public final class KawaFont {
 

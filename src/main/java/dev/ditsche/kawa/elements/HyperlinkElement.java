@@ -13,7 +13,11 @@ import org.apache.pdfbox.pdmodel.interactive.action.PDActionURI;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationLink;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDBorderStyleDictionary;
 
-/** Renders clickable text with a PDF URI action. */
+/**
+ * Renders clickable text with a PDF URI action.
+ *
+ * @author Tobias Dittmann
+ */
 public final class HyperlinkElement implements ContentElement {
 
   private final String uri;

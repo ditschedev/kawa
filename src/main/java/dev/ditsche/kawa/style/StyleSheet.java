@@ -3,7 +3,11 @@ package dev.ditsche.kawa.style;
 import dev.ditsche.kawa.units.Unit;
 import java.util.function.Consumer;
 
-/** Collects reusable layout and text styling options. */
+/**
+ * Collects reusable layout and text styling options.
+ *
+ * @author Tobias Dittmann
+ */
 public class StyleSheet {
 
   // Background

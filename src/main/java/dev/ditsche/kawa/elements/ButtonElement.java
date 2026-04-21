@@ -19,6 +19,8 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDPushButton;
  * Renders an interactive PDF push button.
  *
  * <p>Each field name should be unique within the document.
+ *
+ * @author Tobias Dittmann
  */
 public final class ButtonElement implements ContentElement {
 

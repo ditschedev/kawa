@@ -16,7 +16,11 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
-/** Renders a QR code from text content using ZXing. */
+/**
+ * Renders a QR code from text content using ZXing.
+ *
+ * @author Tobias Dittmann
+ */
 public final class QrCodeElement implements ContentElement {
 
   private final String content;

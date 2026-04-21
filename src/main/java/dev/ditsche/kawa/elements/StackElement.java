@@ -6,7 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-/** Renders multiple elements on top of each other in the same box. */
+/**
+ * Renders multiple elements on top of each other in the same box.
+ *
+ * @author Tobias Dittmann
+ */
 public non-sealed class StackElement implements LayoutElement {
 
   private final List<Element> layers = new ArrayList<>();

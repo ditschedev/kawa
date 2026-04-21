@@ -12,7 +12,11 @@ import java.util.logging.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 
-/** Internal renderer that builds a PDF document and writes it to an output target. */
+/**
+ * Internal renderer that builds a PDF document and writes it to an output target.
+ *
+ * @author Tobias Dittmann
+ */
 class KawaRenderer {
 
   private final PageDefinition pageDef;

@@ -11,15 +11,10 @@ import dev.ditsche.kawa.renderer.RenderContext;
  * <p>Use {@link #CustomElement(ElementRenderer)} directly, or call {@code
  * c.item().custom(renderer)} on a {@link ColumnElement}.
  *
- * <pre>{@code
- * c.add(new CustomElement(ctx -> {
- *     ctx.drawRect(ctx.getX(), ctx.getY(), ctx.getWidth(), 24f, KawaColor.hex("#EFF6FF"));
- *     ctx.drawText("Custom block", ctx.getX() + 8f, ctx.getY() + 16f, 10f, KawaColor.hex("#1E40AF"));
- * }));
- * }</pre>
- *
  * @see ElementRenderer
  * @see DrawContext
+ *
+ * @author Tobias Dittmann
  */
 public final class CustomElement implements ContentElement {
 

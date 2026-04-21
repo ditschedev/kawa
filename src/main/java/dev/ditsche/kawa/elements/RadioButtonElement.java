@@ -22,6 +22,8 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDRadioButton;
  *
  * <p>Each field name should be unique within the document. Options are strings used both as display
  * labels and export values.
+ *
+ * @author Tobias Dittmann
  */
 public final class RadioButtonElement implements ContentElement {
 

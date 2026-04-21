@@ -8,7 +8,11 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
 
-/** Caches embedded fonts per PDF document. */
+/**
+ * Caches embedded fonts per PDF document.
+ *
+ * @author Tobias Dittmann
+ */
 public final class FontRegistry {
 
   private final PDDocument document;

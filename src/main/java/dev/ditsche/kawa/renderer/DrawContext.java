@@ -12,6 +12,8 @@ import org.apache.pdfbox.pdmodel.font.PDFont;
  *
  * <p>All coordinates use a top-left origin consistent with {@link LayoutContext}. The conversion to
  * PDFBox's bottom-left coordinate system is handled internally.
+ *
+ * @author Tobias Dittmann
  */
 public final class DrawContext {
 

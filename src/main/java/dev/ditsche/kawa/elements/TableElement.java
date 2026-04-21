@@ -11,7 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-/** Renders a table with configurable columns, rows, padding, and borders. */
+/**
+ * Renders a table with configurable columns, rows, padding, and borders.
+ *
+ * @author Tobias Dittmann
+ */
 public non-sealed class TableElement implements LayoutElement {
 
   // -------------------------------------------------------------------------

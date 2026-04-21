@@ -3,7 +3,11 @@ package dev.ditsche.kawa.font;
 import java.io.IOException;
 import java.io.InputStream;
 
-/** Loads a font from the classpath (e.g. {@code "/fonts/Inter-Regular.ttf"}). */
+/**
+ * Loads a font from the classpath (e.g. {@code "/fonts/Inter-Regular.ttf"}).
+ *
+ * @author Tobias Dittmann
+ */
 record ResourceFontSource(String path) implements FontSource {
   @Override
   public byte[] load() throws IOException {

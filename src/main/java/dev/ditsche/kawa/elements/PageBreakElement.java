@@ -3,7 +3,11 @@ package dev.ditsche.kawa.elements;
 import dev.ditsche.kawa.layout.LayoutContext;
 import dev.ditsche.kawa.renderer.RenderContext;
 
-/** Forces following content onto a new page during pagination. */
+/**
+ * Forces following content onto a new page during pagination.
+ *
+ * @author Tobias Dittmann
+ */
 public final class PageBreakElement implements ContentElement {
 
   @Override

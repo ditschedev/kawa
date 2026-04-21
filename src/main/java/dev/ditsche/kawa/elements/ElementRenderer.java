@@ -13,29 +13,10 @@ import dev.ditsche.kawa.renderer.DrawContext;
  * and needs to render only a vertical slice of itself. The default implementation renders the full
  * element regardless of the slice window, which is correct for most cases.
  *
- * <h2>Example</h2>
- *
- * <pre>{@code
- * ElementRenderer badge = new ElementRenderer() {
- *     private static final float HEIGHT = 20f;
- *
- *     @Override
- *     public float measure(float availableWidth) {
- *         return HEIGHT;
- *     }
- *
- *     @Override
- *     public void render(DrawContext ctx) throws Exception {
- *         ctx.drawRect(ctx.getX(), ctx.getY(), 60f, HEIGHT, KawaColor.hex("#3B82F6"));
- *         ctx.drawText("NEW", ctx.getX() + 6f, ctx.getY() + 13f, 9f, KawaColor.WHITE);
- *     }
- * };
- *
- * c.add(new CustomElement(badge));
- * }</pre>
- *
  * @see CustomElement
  * @see DrawContext
+ *
+ * @author Tobias Dittmann
  */
 public interface ElementRenderer {
 

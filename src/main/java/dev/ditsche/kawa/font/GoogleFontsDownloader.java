@@ -8,7 +8,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-/** Downloads and caches font files from the Google Fonts repository. */
+/**
+ * Downloads and caches font files from the Google Fonts repository.
+ *
+ * @author Tobias Dittmann
+ */
 final class GoogleFontsDownloader {
 
   private static final Path CACHE_DIR = Path.of(System.getProperty("user.home"), ".kawa", "fonts");

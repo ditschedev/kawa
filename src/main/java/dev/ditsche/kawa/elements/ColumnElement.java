@@ -10,7 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-/** Arranges child elements vertically with optional spacing. */
+/**
+ * Arranges child elements vertically with optional spacing.
+ *
+ * @author Tobias Dittmann
+ */
 public non-sealed class ColumnElement implements LayoutElement {
 
   private final List<Element> children = new ArrayList<>();
@@ -278,6 +282,18 @@ public non-sealed class ColumnElement implements LayoutElement {
 
     public BarChartElement barChart(Consumer<BarChartElement> builder) {
       BarChartElement el = new BarChartElement(builder);
+      parent.add(el);
+      return el;
+    }
+
+    public LineChartElement lineChart(Consumer<LineChartElement> builder) {
+      LineChartElement el = new LineChartElement(builder);
+      parent.add(el);
+      return el;
+    }
+
+    public PieChartElement pieChart(Consumer<PieChartElement> builder) {
+      PieChartElement el = new PieChartElement(builder);
       parent.add(el);
       return el;
     }

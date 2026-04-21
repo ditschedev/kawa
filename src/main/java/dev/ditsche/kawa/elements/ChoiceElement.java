@@ -23,6 +23,8 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDListBox;
  *
  * <p>Users can select one item from a scrollable list. Each field name should be unique within the
  * document.
+ *
+ * @author Tobias Dittmann
  */
 public final class ChoiceElement implements ContentElement {
 

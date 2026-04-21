@@ -5,6 +5,8 @@ import dev.ditsche.kawa.units.Unit;
 /**
  * Standard page sizes in PDF user units (points, 1 pt = 1/72 inch). Predefined portrait sizes are
  * available as constants.
+ *
+ * @author Tobias Dittmann
  */
 public final class PageSize {
 

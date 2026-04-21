@@ -3,6 +3,8 @@ package dev.ditsche.kawa.layout;
 /**
  * Represents the available space for an element during layout. Passed top-down through the element
  * tree.
+ *
+ * @author Tobias Dittmann
  */
 public record LayoutContext(float x, float y, float width, float height) {
 

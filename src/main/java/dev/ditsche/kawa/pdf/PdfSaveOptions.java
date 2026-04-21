@@ -2,7 +2,11 @@ package dev.ditsche.kawa.pdf;
 
 import org.apache.pdfbox.pdfwriter.compress.CompressParameters;
 
-/** Save options for PDF post-processing output. */
+/**
+ * Save options for PDF post-processing output.
+ *
+ * @author Tobias Dittmann
+ */
 public final class PdfSaveOptions {
 
   private final PdfSaveMode saveMode;

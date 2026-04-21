@@ -10,7 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 
-/** Renders a flowing text block composed of multiple styled spans. */
+/**
+ * Renders a flowing text block composed of multiple styled spans.
+ *
+ * @author Tobias Dittmann
+ */
 public final class RichTextElement implements ContentElement {
 
   // -------------------------------------------------------------------------

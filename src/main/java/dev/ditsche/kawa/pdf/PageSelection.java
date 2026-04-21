@@ -2,7 +2,11 @@ package dev.ditsche.kawa.pdf;
 
 import java.util.*;
 
-/** Represents a user-facing, one-based page selection. */
+/**
+ * Represents a user-facing, one-based page selection.
+ *
+ * @author Tobias Dittmann
+ */
 public final class PageSelection {
 
   private static final PageSelection ALL = new PageSelection(true, List.of());
