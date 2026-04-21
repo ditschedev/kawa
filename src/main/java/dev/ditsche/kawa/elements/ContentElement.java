@@ -1,6 +1,10 @@
 package dev.ditsche.kawa.elements;
 
-/** Marker interface for leaf elements that render visible content. */
+/**
+ * Marker interface for leaf elements that render visible content.
+ *
+ * @author Tobias Dittmann
+ */
 public sealed interface ContentElement extends Element
     permits TextElement,
         ImageElement,
@@ -18,4 +22,6 @@ public sealed interface ContentElement extends Element
         ChoiceElement,
         ComboboxElement,
         CustomElement,
-        BarChartElement {}
+        BarChartElement,
+        LineChartElement,
+        PieChartElement {}
