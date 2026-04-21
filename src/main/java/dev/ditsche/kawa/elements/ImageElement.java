@@ -1,24 +1,31 @@
 package dev.ditsche.kawa.elements;
 
+import com.github.weisj.jsvg.SVGDocument;
+import com.github.weisj.jsvg.view.FloatSize;
+import com.github.weisj.jsvg.parser.LoaderContext;
+import com.github.weisj.jsvg.parser.SVGLoader;
 import dev.ditsche.kawa.layout.LayoutContext;
 import dev.ditsche.kawa.renderer.RenderContext;
 import dev.ditsche.kawa.units.Unit;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import org.apache.batik.transcoder.TranscoderException;
-import org.apache.batik.transcoder.TranscoderInput;
-import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.rendering.PDFRenderer;
 
-/** Embeds an image into the document. Supported source formats: PNG, JPEG, SVG, PDF. */
+/**
+ * Embeds an image into the document. Supported source formats: PNG, JPEG, SVG, PDF.
+ *
+ * @author Tobias Dittmann
+ */
 public final class ImageElement implements ContentElement {
 
   private static final float PDF_RENDER_DPI = 144f;
@@ -149,12 +156,14 @@ public final class ImageElement implements ContentElement {
       float drawY = pageH - context.y() - drawH;
       if (sizeMode == SizeMode.FILL) {
         drawX = context.x() + (context.width() - drawW) / 2f;
-        drawY = pageH - context.y() - context.height() + (context.height() - drawH) / 2f;
+        float y = pageH - context.y() - context.height();
+
+        drawY = y + (context.height() - drawH) / 2f;
         renderCtx.getContentStream().saveGraphicsState();
         renderCtx
             .getContentStream()
             .addRect(
-                context.x(), pageH - context.y() - context.height(), context.width(), context.height());
+                context.x(), y, context.width(), context.height());
         renderCtx.getContentStream().clip();
         renderCtx.getContentStream().drawImage(image, drawX, drawY, drawW, drawH);
         renderCtx.getContentStream().restoreGraphicsState();
@@ -202,15 +211,23 @@ public final class ImageElement implements ContentElement {
   }
 
   private BufferedImage renderSvg(byte[] svgBytes) throws IOException {
-    BufferedImageTranscoder transcoder = new BufferedImageTranscoder();
-    try {
-      transcoder.transcode(new TranscoderInput(new ByteArrayInputStream(svgBytes)), null);
-    } catch (TranscoderException e) {
-      throw new IOException("Failed to rasterize SVG", e);
-    }
-    BufferedImage image = transcoder.getImage();
-    if (image == null) throw new IOException("SVG transcoding produced no image");
-    return image;
+    SVGDocument doc = new SVGLoader()
+        .load(new ByteArrayInputStream(svgBytes), null, LoaderContext.createDefault());
+    if (doc == null) throw new IOException("Failed to parse SVG");
+
+    FloatSize size = doc.size();
+    // Render at 2× the natural size for crisp output when scaled down into the PDF
+    int w = Math.max(1, (int) Math.ceil(size.width * 2));
+    int h = Math.max(1, (int) Math.ceil(size.height * 2));
+
+    BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+    Graphics2D g2d = img.createGraphics();
+    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+    g2d.scale(2.0, 2.0);
+    doc.render(null, g2d);
+    g2d.dispose();
+    return img;
   }
 
   private String imageSourceLabel() {
@@ -230,23 +247,4 @@ public final class ImageElement implements ContentElement {
     FIXED_WIDTH
   }
 
-  private static final class BufferedImageTranscoder extends PNGTranscoder {
-    private BufferedImage image;
-
-    @Override
-    public BufferedImage createImage(int width, int height) {
-      image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-      return image;
-    }
-
-    @Override
-    public void writeImage(
-        BufferedImage image, org.apache.batik.transcoder.TranscoderOutput output) {
-      this.image = image;
-    }
-
-    private BufferedImage getImage() {
-      return image;
-    }
-  }
 }
