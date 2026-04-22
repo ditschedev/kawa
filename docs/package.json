@@ -15,7 +15,7 @@
   "dependencies": {
     "@radix-ui/react-collapsible": "^1.1.12",
     "class-variance-authority": "^0.7.1",
-    "fumadocs-core": "16.8.1",
+    "fumadocs-core": "16.8.2",
     "fumadocs-mdx": "14.3.1",
     "fumadocs-ui": "npm:@fumadocs/base-ui@latest",
     "lucide-react": "^1.8.0",
